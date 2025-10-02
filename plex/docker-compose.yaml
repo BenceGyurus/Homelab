@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  plex:
+    image: plexinc/pms-docker
+    container_name: plex
+    environment:
+      - ADVERTISE_IP=http://192.168.1.166:32400
+      - PLEX_UID=1000
+      - PLEX_GID=1000
+    volumes:
+      - ./config:/config
+      - /mnt/hdd/media:/data
+    ports:
+      - 32400:32400
+    restart: unless-stopped
