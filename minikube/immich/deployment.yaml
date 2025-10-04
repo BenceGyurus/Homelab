@@ -1,0 +1,127 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: immichserver
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: immichserver
+  template:
+    metadata:
+      labels:
+        app: immichserver
+    spec:
+      containers:
+        - name: immich_server
+          image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+          env:
+            - name : UPLOAD_LOCATION
+              value: /data
+          volumeMounts:
+            - name: immich-data
+              mountPath: ./data
+          ports:
+            - containerPort: 2283
+          resources:
+            limits:
+              cpu: "2"
+              memory: "2Gi"
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: immichserver
+spec:
+  type: ClusterIP
+  selector:
+    app: timescaledb
+  ports:
+    - port: 2283
+      targetPort: 2283
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: immichmachinelearning
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: immich_machine_learning
+  template:
+    metadata:
+      labels:
+        app: immichmachinelearning
+    spec:
+      containers:
+        - name: immich_machine_learning
+          image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+          volumeMounts:
+            - name: model-cache
+              mountPath: /cache
+          resources:
+            limits:
+              cpu: "2"
+              memory: "1Gi"
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: immichredis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: immich_redis
+  template:
+    metadata:
+      labels:
+        app: immichredis
+    spec:
+      containers:
+        - name: immich_redis
+          image: docker.io/valkey/valkey:8-bookworm@sha256:fea8b3e67b15729d4bb70589eb03367bab9ad1ee89c876f54327fc7c6e618571
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+
+--- 
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: immichpostgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: immich_postgres
+  template:
+    metadata:
+      labels:
+        app: immichpostgres
+    spec:
+      containers:
+        - name: immich_postgres
+          image: docker.io/valkey/valkey:8-bookworm@sha256:fea8b3e67b15729d4bb70589eb03367bab9ad1ee89c876f54327fc7c6e618571
+          env:
+            - name : POSTGRES_PASSWORD
+              value: admin
+            - name : POSTGRES_USER
+              value: postgres
+            - name : POSTGRES_DB
+              value: immich
+            - name : POSTGRES_INITDB_ARGS
+              value: '--data-checksums'
+            - name : DB_DATA_LOCATION
+              value: /var/lib/postgresql/data
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
