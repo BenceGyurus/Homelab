@@ -17,9 +17,9 @@ spec:
           image: ghcr.io/immich-app/immich-server:release
           env:
             - name : DB_HOSTNAME
-              value: immich-postgres
+              value: immichpostgres
             - name : REDIS_HOSTNAME
-              value: immich-redis
+              value: immichredis
             - name : UPLOAD_LOCATION
               value: /data
           volumeMounts:
@@ -27,15 +27,11 @@ spec:
             name: data
           ports:
             - containerPort: 2283
-          resources:
-            limits:
-              cpu: "2"
-              memory: "2Gi"
       volumes:
         - name: data
           hostPath:
-            path: ./data
-            type: Directory
+            path: /home/bence/immich-deployment/data
+            type: DirectoryOrCreate
 ---
 
 apiVersion: v1
@@ -45,9 +41,10 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: immich_server
+    app: immichserver
   ports:
-    - port: 2283
+    - name: http
+      port: 2283
       targetPort: 2283
 
 ---
@@ -67,7 +64,7 @@ spec:
         app: immichmachinelearning
     spec:
       containers:
-        - name: immich-machine-learning
+        - name: immichmachinelearning
           image: ghcr.io/immich-app/immich-machine-learning:release
           resources:
             limits:
@@ -90,14 +87,16 @@ spec:
         app: immichredis
     spec:
       containers:
-        - name: immich-redis
+        - name: immichredis
           image: docker.io/valkey/valkey:8-bookworm@sha256:fea8b3e67b15729d4bb70589eb03367bab9ad1ee89c876f54327fc7c6e618571
+          ports:
+            - containerPort: 6379
           resources:
             limits:
               cpu: "1"
               memory: "1Gi"
+---
 
---- 
 
 apiVersion: apps/v1
 kind: Deployment
@@ -114,11 +113,13 @@ spec:
         app: immichpostgres
     spec:
       containers:
-        - name: immich-postgres
-          image: docker.io/valkey/valkey:8-bookworm@sha256:fea8b3e67b15729d4bb70589eb03367bab9ad1ee89c876f54327fc7c6e618571
+        - name: immichpostgres
+          image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:41eacbe83eca995561fe43814fd4891e16e39632806253848efaf04d3c8a8b84
+          ports:
+            - containerPort: 5432
           env:
             - name : POSTGRES_PASSWORD
-              value: admin
+              value: postgres
             - name : POSTGRES_USER
               value: postgres
             - name : POSTGRES_DB
@@ -127,7 +128,27 @@ spec:
               value: '--data-checksums'
             - name : DB_DATA_LOCATION
               value: /var/lib/postgresql/data
-          resources:
-            limits:
-              cpu: "1"
-              memory: "1Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: immichpostgres
+spec:
+  selector:
+    app: immichpostgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: immichredis
+spec:
+  selector:
+    app: immichredis
+  ports:
+    - port: 6379
+      targetPort: 6379
+  type: ClusterIP
