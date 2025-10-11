@@ -1,0 +1,106 @@
+services:
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    container_name: transmission
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /mnt/ssd/tramission:/config
+      - /mnt/hdd/media:/downloads
+      - /mnt/hdd/transmission/watch:/watch 
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
+    restart: unless-stopped
+    networks:
+      media-server:
+        ipv4_address: 10.5.0.5
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /mnt/ssd/sonarr:/config
+      - /mnt/hdd/media:/tv
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+    networks:
+      media-server:
+        ipv4_address: 10.5.0.6
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /mnt/ssd/radarr:/config
+      - /mnt/hdd/media:/movies
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+    networks:
+      media-server:
+        ipv4_address: 10.5.0.7
+  overseerr:
+    image: lscr.io/linuxserver/overseerr:latest
+    container_name: overseerr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /mnt/ssd/overseer:/config
+    ports:
+      - 5055:5055
+    restart: unless-stopped
+    networks:
+      media-server:
+        ipv4_address: 10.5.0.8
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /mnt/ssd/powlarr:/config
+    ports:
+      - 9696:9696
+    restart: unless-stopped
+    networks:
+      media-server:
+        ipv4_address: 10.5.0.9
+  plex:
+    image: plexinc/pms-docker:latest
+    container_name: plex
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Budapest
+    volumes:
+      - /etc/localtime:/etc/localtime:ro # Sync the container's time to the host's time
+      - /mnt/ssd/plexmediaserver:/config # Plex server application data is stored in a folder called 'plexmediaserver' in the same directory as the docker-compose.yaml file
+      - /mnt/hdd/media:/mnt/tv
+      - /mnt/hdd/media:/mnt/movies
+      - /mnt/hdd/transcode:/mnt/transcode
+    restart: unless-stopped
+
+networks:
+  media-server:
+    name: media-server
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1

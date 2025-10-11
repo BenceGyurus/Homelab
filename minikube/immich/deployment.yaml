@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: immichserver
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: immichserver
@@ -39,7 +39,7 @@ kind: Service
 metadata:
   name: immichserver
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: immichserver
   ports:
@@ -54,7 +54,7 @@ kind: Deployment
 metadata:
   name: immichmachinelearning
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: immichmachinelearning
@@ -66,10 +66,22 @@ spec:
       containers:
         - name: immichmachinelearning
           image: ghcr.io/immich-app/immich-machine-learning:release
-          resources:
-            limits:
-              cpu: "2"
-              memory: "1Gi"
+          ports:
+            - containerPort: 3003
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: immichmachinelearning
+spec:
+  selector:
+    app: immichmachinelearning
+  ports:
+    - port: 3003
+      targetPort: 3003
+  type: ClusterIP
+
 ---
 
 apiVersion: apps/v1

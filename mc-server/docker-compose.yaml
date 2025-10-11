@@ -11,7 +11,7 @@ services:
       ONLINE_MODE: "FALSE"
       SPAWN_PROTECTION: "TRUE"
       PLAYER_IDLE_TIMEOUT: 5
-      WHITELIST: "TRUE"
+      VERSION: "1.21.10"
     volumes:
       # attach the relative directory 'data' to the container's /data path
       - /mnt/hdd/mc:/data
