@@ -1,2 +1,15 @@
 .env
 .vscode
+.terraform/*
+.terraform*
+terraform.tfstate
+terraform.tfstate.backup
+.terraform.lock.hcl
+*.tfvars
+*.tfvars.json
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*cloudflare.sh
+*environment.yaml

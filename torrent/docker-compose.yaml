@@ -7,7 +7,7 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - /mnt/ssd/tramission:/config
+      - /mnt/hdd/tramission:/config
       - /mnt/hdd/media:/downloads
       - /mnt/hdd/transmission/watch:/watch 
     ports:
@@ -26,7 +26,7 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - /mnt/ssd/sonarr:/config
+      - /mnt/hdd/sonarr:/config
       - /mnt/hdd/media:/tv
     ports:
       - 8989:8989
@@ -42,7 +42,7 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - /mnt/ssd/radarr:/config
+      - /mnt/hdd/radarr:/config
       - /mnt/hdd/media:/movies
     ports:
       - 7878:7878
@@ -58,7 +58,7 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - /mnt/ssd/overseer:/config
+      - /mnt/hdd/overseer:/config
     ports:
       - 5055:5055
     restart: unless-stopped
@@ -73,7 +73,7 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - /mnt/ssd/powlarr:/config
+      - /mnt/hdd/powlarr:/config
     ports:
       - 9696:9696
     restart: unless-stopped
@@ -82,20 +82,33 @@ services:
         ipv4_address: 10.5.0.9
   plex:
     image: plexinc/pms-docker:latest
+    privileged: true
     container_name: plex
     network_mode: host
+    devices:
+    - /dev/bus/usb:/dev/bus/usb
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/Budapest
     volumes:
       - /etc/localtime:/etc/localtime:ro # Sync the container's time to the host's time
-      - /mnt/ssd/plexmediaserver:/config # Plex server application data is stored in a folder called 'plexmediaserver' in the same directory as the docker-compose.yaml file
+      - /mnt/hdd/plexmediaserver:/config
       - /mnt/hdd/media:/mnt/tv
       - /mnt/hdd/media:/mnt/movies
-      - /mnt/hdd/transcode:/mnt/transcode
     restart: unless-stopped
-
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    network_mode: "host"
+    volumes:
+      - /mnt/hdd/jellyfin:/config
+      - /mnt/hdd/jellyfin/cache:/cache
+      - /mnt/hdd/media:/media:ro
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Budapest
+      - JELLYFIN_PublishedServerUrl=http://192.168.1.84:8096
 networks:
   media-server:
     name: media-server
