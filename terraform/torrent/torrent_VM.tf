@@ -8,10 +8,37 @@ terraform {
 }
 
 provider "proxmox" {
-  endpoint = "https://192.168.1.70:8006"
-  username = "root@pam"
-  password = "bencegyurus2005"
+  endpoint = var.proxmox_host
+  username = var.proxmox_username
+  password = var.proxmox_password
   insecure = true
+}
+
+variable "proxmox_username" {
+  description = "Proxmox username"
+  type        = string
+}
+
+variable "proxmox_password" {
+  description = "Proxmox password"
+  type        = string
+  sensitive   = true
+}
+
+variable "proxmox_host" {
+  description = "Proxmox host URL"
+  type        = string
+}
+
+variable "vm_username" {
+  description = "VM username"
+  type        = string
+}
+
+variable "vm_password" {
+  description = "VM password"
+  type        = string
+  sensitive   = true
 }
 
 resource "proxmox_virtual_environment_download_file" "ubuntu_img" {
@@ -61,8 +88,8 @@ resource "proxmox_virtual_environment_vm" "torrent_server" {
 
   initialization {
   user_account {
-    username = "bence"
-    password = "admin"
+    username = var.vm_username
+    password = var.vm_password
     keys     = [file("~/.ssh/id_ed25519.pub")]
   }
 
