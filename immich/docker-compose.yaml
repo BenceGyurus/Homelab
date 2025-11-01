@@ -77,6 +77,8 @@ services:
   power-tools:
     container_name: immich_power_tools
     image: ghcr.io/varun-raj/immich-power-tools:latest
+    restart: 
+      unless-stopped
     ports:
       - "8001:3000"
     env_file:
@@ -124,6 +126,7 @@ services:
       IMMICH_URL: "https://photos.gyurus.hu/"
       RESTART_TIMEOUT: 3600
       API_KEY: "${API_KEY}"
+      ARCHIVE: "true"
 
 
 volumes:
