@@ -20,6 +20,7 @@ services:
     #   file: hwaccel.transcoding.yml
     #   service: cpu # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
     environment:
+      - IMMICH_MACHINE_LEARNING_URL=http://immich-ml-balancer:80
       - UPLOAD_LOCATION=/mnt/hdd/library
       - THUMB_LOCATION=/mnt/hdd/immich-thumbs
     volumes:
@@ -39,30 +40,7 @@ services:
       resources:
         limits:
           cpus: "4"
-          memory: 6g
-
-  immich-machine-learning:
-    env_file:
-      - path: .env
-        required: true
-    container_name: immich_machine_learning
-    # For hardware acceleration, add one of -[armnn, cuda, rocm, openvino, rknn] to the image tag.
-    # Example tag: ${IMMICH_VERSION:-release}-cuda
-    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
-    # extends: # uncomment this section for hardware acceleration - see https://immich.app/docs/features/ml-hardware-acceleration
-    #   file: hwaccel.ml.yml
-    #   service: cpu # set to one of [armnn, cuda, rocm, openvino, openvino-wsl, rknn] for accelerated inference - use the `-wsl` version for WSL2 where applicable
-    volumes:
-      - model-cache:/cache
-    restart: always
-    healthcheck:
-      disable: false
-    deploy:
-      resources:
-        limits:
-          cpus: "4"
-          memory: 2g
-
+          memory: 3g
   redis:
     env_file:
       - path: .env
@@ -96,6 +74,57 @@ services:
       - ${DB_DATA_LOCATION:-/mnt/hdd/immich-db}:/var/lib/postgresql/data
     shm_size: 256mb
     restart: always
+  power-tools:
+    container_name: immich_power_tools
+    image: ghcr.io/varun-raj/immich-power-tools:latest
+    ports:
+      - "8001:3000"
+    env_file:
+      - .env
+  immich-ml-balancer:
+    container_name: immich_ml_balancer
+    image: apetersson/immich_ml_balancer:latest
+    environment:
+      IMML_BACKENDS: "immich-machine-learning"
+    volumes:
+      - /var/run/dbus:/var/run/dbus
+      - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket
+    depends_on:
+      - immich-machine-learning
+    restart: always
+
+  #your existing immich-machine-learning docker container
+  immich-machine-learning:
+    container_name: immich_machine_learning
+    image: ghcr.io/immich-app/immich-machine-learning:release-openvino
+    volumes:
+      - /mnt/hdd/immich-model-cache:/cache
+    device_cgroup_rules:
+      - 'c 189:* rmw'
+    env_file:
+      - .env
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 3G
+  immich-stack:
+    image: ghcr.io/majorfi/immich-stack:latest
+    container_name: immich-stack
+    env_file: .env
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+  immich-tiktok-remover:
+    container_name: immich-tiktok-remover
+    image: alyssaholland99/immich-tiktok-remover:stable
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      IMMICH_URL: "https://photos.gyurus.hu/"
+      RESTART_TIMEOUT: 3600
+      API_KEY: "${API_KEY}"
+
 
 volumes:
   model-cache: 

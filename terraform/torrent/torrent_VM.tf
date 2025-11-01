@@ -7,6 +7,8 @@ terraform {
   }
 }
 
+# csatlakotás a proxmox-hoz
+
 provider "proxmox" {
   endpoint = var.proxmox_host
   username = var.proxmox_username
@@ -14,10 +16,14 @@ provider "proxmox" {
   insecure = true
 }
 
+# változó létrehozása a felhasználónévnek amit a környezeti változókból szed ki
+
 variable "proxmox_username" {
   description = "Proxmox username"
   type        = string
 }
+
+# változó létrehozása a jelszónak
 
 variable "proxmox_password" {
   description = "Proxmox password"
@@ -25,21 +31,30 @@ variable "proxmox_password" {
   sensitive   = true
 }
 
+# változó a proxmox IP-jéhez
+
 variable "proxmox_host" {
   description = "Proxmox host URL"
   type        = string
 }
+
+# változó a VM felhasználónevéhez
 
 variable "vm_username" {
   description = "VM username"
   type        = string
 }
 
+
+# változó a VM felhasználónévnek
+
 variable "vm_password" {
   description = "VM password"
   type        = string
   sensitive   = true
 }
+
+# Letöltjük az Ubuntu 24.04 ISO fájlt ami a proxmox_virtual_environment_download_file ban lesz
 
 resource "proxmox_virtual_environment_download_file" "ubuntu_img" {
   content_type = "iso"
@@ -48,7 +63,7 @@ resource "proxmox_virtual_environment_download_file" "ubuntu_img" {
   url          = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
 }
 
-# Create the Ubuntu VM
+# VM elkészítése az erőforrások és a konfiguráció megadásával
 resource "proxmox_virtual_environment_vm" "torrent_server" {
   node_name = "proxmox"
   name      = "torrent-server"
@@ -65,7 +80,7 @@ resource "proxmox_virtual_environment_vm" "torrent_server" {
   }
 
   memory {
-    dedicated = 4096
+    dedicated = 3276
   }
 
 
@@ -102,9 +117,14 @@ resource "proxmox_virtual_environment_vm" "torrent_server" {
 }
 }
 
-resource "null_resource" "docker_compose_setup" {
+
+# resource létrehozása a docker telepítéséhez és a konténerek futtatásához
+resource "null_resource" "docker_setup_and_run" {
+  # Csak akkor indul el ha a VM elkészült
+  # HIBA a qemu-guest-agent telepítése után azonnal csatlakozik, de a qemu-guest-agent nincs benne a telepített image-ben így azt manuálisan kell telepíteni és elindítani
   depends_on = [proxmox_virtual_environment_vm.torrent_server]
 
+  # SSH kapcsolat beállítása a VM-hez
   connection {
     type        = "ssh"
     host        = "192.168.1.84"
@@ -113,20 +133,17 @@ resource "null_resource" "docker_compose_setup" {
     timeout     = "2m"
   }
 
-  # Run setup commands remotely
+  # Távoli parancsok futtatása a VM-en a Docker telepítéséhez és konfigurálásához, a provisioner teszi lehetővé, hogy commandokat futtassunk az installációt követően és a remote-exec, pedig az mondja meg, hogy távolról hajtsa végre a parancsokat
   provisioner "remote-exec" {
     inline = [
       "export DEBIAN_FRONTEND=noninteractive",
-      "sudo apt install qemu-guest-agent -y",
-      "sudo systemctl enable --now qemu-guest-agent",
-      # --- Create partition, format, and mount the 800GB disk ---
+
       "sudo parted /dev/sdb --script mklabel gpt mkpart primary ext4 0% 100%",
       "sudo mkfs.ext4 -F /dev/sdb1",
       "sudo mkdir -p /mnt/hdd",
       "echo '/dev/sdb1 /mnt/hdd ext4 defaults 0 2' | sudo tee -a /etc/fstab",
       "sudo mount -a",
 
-      # --- Install Docker ---
       "sudo apt-get remove -y docker docker-engine docker.io containerd runc || true",
       "sudo apt-get update",
       "sudo apt-get install -y ca-certificates curl gnupg lsb-release parted",
@@ -137,17 +154,17 @@ resource "null_resource" "docker_compose_setup" {
       "sudo apt-get update",
       "sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin",
 
-      # --- Start your docker-compose stack ---
       "mkdir -p /home/bence/torrent",
     ]
   }
 
+  # fájl feltöltése a VM-re, a file provisioner teszi lehetővé, hogy fájlt töltünk fel az installáció után
   provisioner "file" {
     source      = "../torrent/docker-compose.yaml"
     destination = "/home/bence/docker-compose.yaml"
   }
 
-
+  # Docker konténerek indítása a feltöltött docker-compose fájl alapján
   provisioner "remote-exec" {
   inline = [
     "mkdir -p /home/bence/torrent",

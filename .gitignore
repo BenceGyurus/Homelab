@@ -13,3 +13,7 @@ override.tf.json
 *_override.tf
 *cloudflare.sh
 *environment.yaml
+*config.yaml
+*Movies.yaml
+.DS_Store
+*Series.yaml
