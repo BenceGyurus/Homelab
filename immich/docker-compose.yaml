@@ -87,7 +87,7 @@ services:
     container_name: immich_ml_balancer
     image: apetersson/immich_ml_balancer:latest
     environment:
-      IMML_BACKENDS: "immich-machine-learning"
+      IMML_BACKENDS: "immich-machine-learning,immich-machine-learning-openvino"
     volumes:
       - /var/run/dbus:/var/run/dbus
       - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket
@@ -96,8 +96,8 @@ services:
     restart: always
 
   #your existing immich-machine-learning docker container
-  immich-machine-learning:
-    container_name: immich_machine_learning
+  immich-machine-learning-openvino:
+    container_name: immich_machine_learning-openvino
     image: ghcr.io/immich-app/immich-machine-learning:release-openvino
     volumes:
       - /mnt/hdd/immich-model-cache:/cache
@@ -109,7 +109,21 @@ services:
     deploy:
       resources:
         limits:
-          memory: 3G
+          memory: 1.5G
+  immich-machine-learning:
+    container_name: immich_machine_learning
+    image: ghcr.io/immich-app/immich-machine-learning:release
+    volumes:
+      - /mnt/hdd/immich-model-cache:/cache
+    device_cgroup_rules:
+      - 'c 189:* rmw'
+    env_file:
+      - .env
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 1.5G
   immich-stack:
     image: ghcr.io/majorfi/immich-stack:latest
     container_name: immich-stack
