@@ -1,0 +1,12 @@
+graph TD
+immich-upload-optimizer-->immich-server
+immich-server-->redis
+immich-server-->database
+immich-->power-tools
+immich-server-->immich-ml-balancer
+immich-ml-balancer-->immich-machine-learning-openvino
+immich-ml-balancer-->immich-machine-learning
+immich-ml-balancer-->immich-machine-learning-light
+immich-->immich-stack
+immich-->immich-tiktok-remover
+immich-->immich-upload-optimizer
