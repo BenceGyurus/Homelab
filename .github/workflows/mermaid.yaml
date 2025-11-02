@@ -3,9 +3,9 @@ name: Generate Mermaid Diagrams
 on:
   push:
     paths:
-      - ./diagrams/immich.mmd
-      - ./diagrams/infra.mmd
-      - ./diagrams/torrent.mmd
+      - diagrams/immich.mmd
+      - diagrams/infra.mmd
+      - diagrams/torrent.mmd
       - .github/workflows/mermaid.yml
   workflow_dispatch:
 
@@ -28,13 +28,13 @@ jobs:
         run: npm install -g @mermaid-js/mermaid-cli
 
       - name: Generate PNG from Mermaid file (infra)
-        run: mmdc -i ./diagrams/infra.mmd -o ./diagrams/infra.png --puppeteerConfigFile ./diagrams/puppeteer-config.json --scale 2
+        run: mmdc -i diagrams/infra.mmd -o diagrams/infra.png --puppeteerConfigFile ./diagrams/puppeteer-config.json --scale 2
 
       - name: Generate PNG from Mermaid file (torrent)
-        run: mmdc -i ./diagrams/torrent.mmd -o ./diagrams/torrent.png --puppeteerConfigFile ./diagrams/puppeteer-config.json --scale 2
+        run: mmdc -i diagrams/torrent.mmd -o diagrams/torrent.png --puppeteerConfigFile ./diagrams/puppeteer-config.json --scale 2
 
       - name: Generate PNG from Mermaid file (immich)
-        run: mmdc -i ./diagrams/immich.mmd -o ./diagrams/immich.png --puppeteerConfigFile ./diagrams/puppeteer-config.json --scale 2
+        run: mmdc -i diagrams/immich.mmd -o diagrams/immich.png --puppeteerConfigFile ./diagrams/puppeteer-config.json --scale 2
 
       - name: Commit diagram image
         env:
