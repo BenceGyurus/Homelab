@@ -28,8 +28,6 @@ services:
       - ${UPLOAD_LOCATION:-/mnt/hdd/library}:/data
       - /etc/localtime:/etc/localtime:ro
       - ${THUMB_LOCATION:-/mnt/hdd/immich-thumbs}:/data/thumbs
-    ports:
-      - '2283:2283'
     depends_on:
       - redis
       - database
@@ -40,7 +38,7 @@ services:
       resources:
         limits:
           cpus: "4"
-          memory: 3g
+          memory: 4g
   redis:
     env_file:
       - path: .env
@@ -87,7 +85,7 @@ services:
     container_name: immich_ml_balancer
     image: apetersson/immich_ml_balancer:latest
     environment:
-      IMML_BACKENDS: "immich-machine-learning,immich-machine-learning-openvino"
+      IMML_BACKENDS: "immich-machine-learning,immich-machine-learning-openvino,immich-machine-learning-light"
     volumes:
       - /var/run/dbus:/var/run/dbus
       - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket
@@ -123,7 +121,21 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1.5G
+          memory: 2G
+  immich-machine-learning-light:
+    container_name: immich_machine_learning_light
+    image: ghcr.io/immich-app/immich-machine-learning:release
+    volumes:
+      - /mnt/hdd/immich-model-cache:/cache
+    device_cgroup_rules:
+      - 'c 189:* rmw'
+    env_file:
+      - .env
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 1G
   immich-stack:
     image: ghcr.io/majorfi/immich-stack:latest
     container_name: immich-stack
@@ -141,6 +153,16 @@ services:
       RESTART_TIMEOUT: 3600
       API_KEY: "${API_KEY}"
       ARCHIVE: "true"
+  immich-upload-optimizer:
+    image: ghcr.io/miguelangel-nubla/immich-upload-optimizer:latest
+    restart: 
+      unless-stopped
+    ports:
+      - "2283:2283"
+    environment:
+      - IUO_UPSTREAM=http://immich-server:2283
+    depends_on:
+      - immich-server
 
 
 volumes:
