@@ -3,9 +3,9 @@ name: Generate Mermaid Diagrams
 on:
   push:
     paths:
-      - diagrams/immich.mmd
-      - diagrams/infra.mmd
-      - diagrams/torrent.mmd
+      - /diagrams/immich.mmd
+      - /diagrams/infra.mmd
+      - /diagrams/torrent.mmd
       - .github/workflows/mermaid.yml
   workflow_dispatch:
 
