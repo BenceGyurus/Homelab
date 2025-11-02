@@ -1,8 +1,8 @@
 # Infrastcture:
-![[/diagrams/infra.png]]
+![[diagrams/infra.png]]
 
 ## Immich:
-![[/diagrams/immich.png]]
+![[diagrams/immich.png]]
 
 ## Torrent:
-![[/diragrams/torrent.png]]
+![[diragrams/torrent.png]]
