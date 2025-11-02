@@ -46,10 +46,6 @@ jobs:
           git config user.email "${{ github.actor }}@users.noreply.github.com"
 
           # Only commit if there are changes
-          if ! git diff --quiet diagrams/*.png; then
-            git add diagrams/*.png
-            git commit -m "Auto-generated Mermaid diagram image for push ${{ github.sha }}"
-            git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:${{ github.ref }}
-          else
-            echo "No diagram changes to commit."
-          fi
+          git add diagrams/*.png
+          git commit -m "Auto-generated Mermaid diagram image for push ${{ github.sha }}"
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:${{ github.ref }}
