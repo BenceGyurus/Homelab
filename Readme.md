@@ -1,8 +1,8 @@
 # Infrastcture:
-![[./diagrams/infra.png]]
+![Alt text](diagrams/infra.png)
 
 ## Immich:
-![[./diagrams/immich.png]]
+![Alt text](diagrams/immich.png)
 
 ## Torrent:
-![[./diragrams/torrent.png]]
+![Alt text](diagrams/torrent.png)
