@@ -1,17 +1,19 @@
 services:
-
   caddy:
     image: ${SEAFILE_CADDY_IMAGE:-lucaslorentz/caddy-docker-proxy:2.9-alpine}
     restart: unless-stopped
     container_name: seafile-caddy
     ports:
-      - 80:80
-      - 443:443
+      - "80:80"
+      - "443:443"
     environment:
       - CADDY_INGRESS_NETWORKS=seafile-net
+      - TZ=${TIME_ZONE:-Etc/UTC}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ${SEAFILE_CADDY_VOLUME:-/opt/seafile-caddy}:/data/caddy
+      # Split config and data so Caddy stores certs/config properly
+      - ${SEAFILE_CADDY_VOLUME:-/opt/seafile-caddy}/data:/data
+      - ${SEAFILE_CADDY_VOLUME:-/opt/seafile-caddy}/config:/config
     networks:
       - seafile-net
     healthcheck:

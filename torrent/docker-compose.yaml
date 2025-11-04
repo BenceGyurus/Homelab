@@ -97,18 +97,6 @@ services:
       - /mnt/hdd/media:/mnt/tv
       - /mnt/hdd/media:/mnt/movies
     restart: unless-stopped
-  jellyfin:
-    image: jellyfin/jellyfin:latest
-    container_name: jellyfin
-    network_mode: "host"
-    volumes:
-      - /mnt/hdd/jellyfin:/config
-      - /mnt/hdd/jellyfin/cache:/cache
-      - /mnt/hdd/media:/media:ro
-    restart: unless-stopped
-    environment:
-      - TZ=Europe/Budapest
-      - JELLYFIN_PublishedServerUrl=http://192.168.1.84:8096
   kometa:
     image: lscr.io/linuxserver/kometa:latest
     container_name: kometa
