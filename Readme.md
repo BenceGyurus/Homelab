@@ -6,3 +6,6 @@
 
 ## Torrent:
 ![Alt text](diagrams/torrent.png)
+
+## Seafile:
+![Alt text](diagrams/seafile.png)

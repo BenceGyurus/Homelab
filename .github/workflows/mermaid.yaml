@@ -37,6 +37,9 @@ jobs:
       - name: Generate PNG from Mermaid file (immich)
         run: mmdc -i diagrams/immich.mmd -o diagrams/immich.png --puppeteerConfigFile diagrams/puppeteer-config.json --scale 2
 
+      - name: Generate PNG from Mermaid file (seafile)
+        run: mmdc -i diagrams/seafile.mmd -o diagrams/seafile.png --puppeteerConfigFile diagrams/puppeteer-config.json --scale 2
+
       - name: Commit and push diagram images
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
