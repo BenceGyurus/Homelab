@@ -11,6 +11,8 @@ name: immich
 
 services:
   immich-server:
+    ports:
+      - "2283:2283"
     env_file:
       - path: .env
         required: true
@@ -153,16 +155,18 @@ services:
       RESTART_TIMEOUT: 3600
       API_KEY: "${API_KEY}"
       ARCHIVE: "true"
-  immich-upload-optimizer:
-    image: ghcr.io/miguelangel-nubla/immich-upload-optimizer:latest
-    restart: 
-      unless-stopped
-    ports:
-      - "2283:2283"
-    environment:
-      - IUO_UPSTREAM=http://immich-server:2283
-    depends_on:
-      - immich-server
+#  immich-upload-optimizer:
+#    image: ghcr.io/miguelangel-nubla/immich-upload-optimizer:latest
+#    restart: 
+#      unless-stopped
+#    ports:
+#      - "2283:2283"
+#    environment:
+#      - IUO_UPSTREAM=http://immich-server:2283
+#    depends_on:
+#      - immich-server
+#    volumes:
+#      - /mnt/hdd/immich-upload-optimizer:/tmp
 
 
 volumes:

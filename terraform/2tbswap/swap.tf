@@ -64,9 +64,9 @@ resource "proxmox_virtual_environment_download_file" "ubuntu_img" {
 }
 
 # VM elkészítése az erőforrások és a konfiguráció megadásával
-resource "proxmox_virtual_environment_vm" "torrent_server" {
+resource "proxmox_virtual_environment_vm" "swap_vm" {
   node_name = "proxmox"
-  name      = "torrent-server"
+  name      = "swap-vm"
   started   = true
 
   agent{
@@ -80,7 +80,7 @@ resource "proxmox_virtual_environment_vm" "torrent_server" {
   }
 
   memory {
-    dedicated = 3276
+    dedicated = 1024
   }
 
 
@@ -88,12 +88,7 @@ resource "proxmox_virtual_environment_vm" "torrent_server" {
     datastore_id = "storage"
     file_id      = proxmox_virtual_environment_download_file.ubuntu_img.id
     interface    = "scsi0"
-  }
-
-  disk {
-    interface    = "scsi1"
-    datastore_id = "storage"
-    size         = 800
+    size        = 30
   }
 
   network_device {
@@ -110,7 +105,7 @@ resource "proxmox_virtual_environment_vm" "torrent_server" {
 
   ip_config {
     ipv4 {
-      address = "192.168.1.84/24"
+      address = "192.168.1.90/24"
       gateway = "192.168.1.1"
     }
   }
@@ -138,22 +133,17 @@ resource "null_resource" "docker_setup_and_run" {
     inline = [
       "export DEBIAN_FRONTEND=noninteractive",
 
-      "sudo mkfs.ext4 /dev/sdb1",
-      "sudo mkdir -p /mnt/hdd",
-      "echo '/dev/sdb1 /mnt/hdd ext4 defaults 0 2' | sudo tee -a /etc/fstab",
-      "sudo mount -a",
-
-      "sudo apt-get remove -y docker docker-engine docker.io containerd runc || true",
+      "sudo apt update",
+      "sudo apt upgrade -y",
+      "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb",
+      "sudo dpkg -i google-chrome-stable_current_amd64.deb",
+      "sudo apt-get install -f -y",
+      "sudo add-apt-repository ppa:alessandro-strada/ppa",
       "sudo apt-get update",
-      "sudo apt-get install -y ca-certificates curl gnupg lsb-release parted",
-      "sudo mkdir -p /etc/apt/keyrings",
-      "sudo rm -f /etc/apt/keyrings/docker.gpg",
-      "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg",
-      "echo \"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null",
-      "sudo apt-get update",
-      "sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin",
+      "sudo apt-get install google-drive-ocamlfuse",
+      "echo oauth2_loopback=true\nstream_large_files=true\nlarge_file_threshold_mb=0 > ~/.gdfuse/default/config"
 
-      "mkdir -p /home/bence/torrent",
+
     ]
   }
 
