@@ -92,7 +92,7 @@ services:
       - PGID=1000
       - TZ=Europe/Budapest
     volumes:
-      - /etc/localtime:/etc/localtime:ro # Sync the container's time to the host's time
+      - /etc/localtime:/etc/localtime:ro
       - /mnt/hdd/plexmediaserver:/config
       - /mnt/hdd/media:/mnt/tv
       - /mnt/hdd/media:/mnt/movies
@@ -104,7 +104,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
-      - KOMETA_CONFIG= /config/config.yml
+      - KOMETA_CONFIG=/config/config.yml
       - KOMETA_TIME=03:00
       - KOMETA_RUN=True
       - KOMETA_TEST=False

@@ -1,14 +1,21 @@
 graph TD;
     Proxmox-192.168.1.70-->Docker-192.168.1.76;
     Docker-192.168.1.76-->immich;
-    Docker-192.168.1.76-->Seafile
-    Docker-192.168.1.76-->Prometheus
-    Docker-192.168.1.76-->Grafana
+    Docker-192.168.1.76-->Seafile;
+    Docker-192.168.1.76-->Prometheus;
+    Docker-192.168.1.76-->Grafana;
     
     Proxmox-192.168.1.70-->TorrentServer-192.168.1.84;
-    TorrentServer-192.168.1.84-->Torrent
+    TorrentServer-192.168.1.84-->Torrent;
     
-    Proxmox-192.168.1.70-->Unifi-192.168.1.169
-    Unifi-192.168.1.169-->Unifi-controller
+    Proxmox-192.168.1.70-->Unifi-192.168.1.169;
+    Unifi-192.168.1.169-->Unifi-controller;
     
-    Proxmox-192.168.1.70-->Home-assistant-192.168.1.171
+    Proxmox-192.168.1.70-->Home-assistant-192.168.1.171;
+
+    Proxmox-192.168.1.70-->Cloudflare-tunnel-192.168.1.254;
+    Cloudflare-tunnel-192.168.1.254-->cloudflared.service;
+    
+    Proxmox-192.168.1.70-->Adguard-192.168.1.250;
+    Adguard-192.168.1.250-->Docker:Adguard-Home;
+
