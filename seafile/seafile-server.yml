@@ -48,6 +48,7 @@ services:
     volumes:
       - ${SEAFILE_VOLUME:-/opt/seafile-data}:/shared
     environment:
+      - SERVICE_URL=${SERVICE_URL:-http://localhost}
       - SEAFILE_MYSQL_DB_HOST=${SEAFILE_MYSQL_DB_HOST:-db}
       - SEAFILE_MYSQL_DB_PORT=${SEAFILE_MYSQL_DB_PORT:-3306}
       - SEAFILE_MYSQL_DB_USER=${SEAFILE_MYSQL_DB_USER:-seafile}
