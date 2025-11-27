@@ -38,15 +38,11 @@ resource "null_resource" "docker_setup" {
     "sudo apt-get update",
     "sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin",
 
-    "mkdir -p /home/bence/mc-server /home/bence/immich /home/bence/portainer",
+    "mkdir -p /home/bence/immich",
 
     ]
   }
 
- provisioner "file" {
-    source      = "../../mc-server/docker-compose.yaml"
-    destination = "/home/bence/mc-server/docker-compose.yaml"
-  }
   provisioner "file" {
     source      = "../../immich/docker-compose.yaml"
     destination = "/home/bence/immich/docker-compose.yaml"
@@ -60,7 +56,6 @@ resource "null_resource" "docker_setup" {
 provisioner "remote-exec" {
   inline = [
     "set -a && source /home/bence/immich/.env && set +a",
-    "cd /home/bence/mc-server && sudo docker compose up -d",
     "cd /home/bence/immich && sudo docker compose up -d"
   ]
 }

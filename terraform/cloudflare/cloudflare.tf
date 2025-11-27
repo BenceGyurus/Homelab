@@ -72,7 +72,7 @@ resource "proxmox_virtual_environment_vm" "cloudflare_tunnel" {
 
 
   disk {
-    datastore_id = "storage"
+    datastore_id = "TB1"
     file_id      = proxmox_virtual_environment_download_file.latest_static_ubuntu_24_noble_qcow2_img.id
     interface    = "scsi0"
   }
@@ -113,19 +113,6 @@ resource "null_resource" "docker_compose_setup" {
     script_path = "./cloudflare.sh"
   }
 
-  provisioner "remote-exec" {
-  inline = [
-    "echo 'Waiting for SSH...'",
-    "for i in {1..30}; do nc -zv 192.168.1.254 22 && break || sleep 10; done",
-    "echo 'SSH is up!'"
-  ]
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "export DEBIAN_FRONTEND=noninteractive",
-    ]
-  }
 
   provisioner "file" {
   source      = "./cloudflare.sh"
@@ -134,6 +121,7 @@ resource "null_resource" "docker_compose_setup" {
 
 provisioner "remote-exec" {
   inline = [
+    "export DEBIAN_FRONTEND=noninteractive",
     "sudo mkdir -p /home/${var.vm_username}/cloudflare-tunnel",
     "sudo mv /tmp/cloudflare.sh /home/${var.vm_username}/cloudflare-tunnel/cloudflare.sh",
     "sudo chmod +x /home/${var.vm_username}/cloudflare-tunnel/cloudflare.sh",
