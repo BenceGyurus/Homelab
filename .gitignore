@@ -17,3 +17,4 @@ override.tf.json
 *Movies.yaml
 .DS_Store
 *Series.yaml
+mail-drop/config.json

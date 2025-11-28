@@ -91,26 +91,12 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/Budapest
+      - ADVERTISE_IP=https://stream.gyurus.hu
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /mnt/hdd/plexmediaserver:/config
       - /mnt/hdd/media:/mnt/tv
       - /mnt/hdd/media:/mnt/movies
-    restart: unless-stopped
-  kometa:
-    image: lscr.io/linuxserver/kometa:latest
-    container_name: kometa
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
-      - KOMETA_CONFIG=/config/config.yml
-      - KOMETA_TIME=03:00
-      - KOMETA_RUN=True
-      - KOMETA_TEST=False
-      - KOMETA_NO_MISSING=False
-    volumes:
-      - ./config:/config
     restart: unless-stopped
 networks:
   media-server:

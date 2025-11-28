@@ -1,0 +1,18 @@
+services:
+  maildrop:
+    image: haileyydev/maildrop:latest
+    container_name: maildrop
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+      - "25:25"
+    environment:
+      - DOMAIN=maildrop.gyurus.hu
+  ddns-updater:
+    image: qmcgaw/ddns-updater:latest
+    container_name: ddns-updater
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./:/updater/data
