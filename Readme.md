@@ -9,3 +9,6 @@
 
 ## Seafile:
 ![Alt text](diagrams/seafile.png)
+
+## Grafana:
+![Alt text](diagrams/grafana.png)
