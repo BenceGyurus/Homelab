@@ -39,6 +39,9 @@ jobs:
 
       - name: Generate PNG from Mermaid file (seafile)
         run: mmdc -i diagrams/seafile.mmd -o diagrams/seafile.png --puppeteerConfigFile diagrams/puppeteer-config.json --scale 2
+      
+      - name: Generate PNG from Mermaid file (grafana)
+        run: mmdc -i diagrams/grafana.mmd -o diagrams/grafana.png --puppeteerConfigFile diagrams/puppeteer-config.json --scale 2
 
       - name: Commit and push diagram images
         env:
