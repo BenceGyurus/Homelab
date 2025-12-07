@@ -33,6 +33,15 @@ services:
       timeout: 5s
       retries: 10
 
+  garage:
+    image: dxflrs/garage:v2.1.0
+    container_name: garage
+    network_mode: "host"
+    restart: unless-stopped
+    volumes:
+      - ./garage.toml:/etc/garage.toml
+      - /mnt/hdd/garage/meta:/var/lib/garage/meta
+      - /mnt/hdd/garage/data:/var/lib/garage/data
 
   seafile:
     image: ${SEAFILE_IMAGE:-seafileltd/seafile-pro-mc:13.0-latest}
