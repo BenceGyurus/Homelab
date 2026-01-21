@@ -7,9 +7,9 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - /mnt/hdd/tramission:/config
-      - /mnt/hdd/media:/downloads
-      - /mnt/hdd/transmission/watch:/watch 
+      - ./data/tramission:/config
+      - ./data:/data
+      - ./data/transmission/watch:/watch 
     ports:
       - 9091:9091
       - 51413:51413
@@ -26,9 +26,8 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - /mnt/hdd/sonarr:/config
-      - /mnt/hdd/media:/tv
-      - /mnt/hdd/media/complete/tv-sonarr:/downloads/complete/tv-sonarr
+      - ./data/sonarr:/config
+      - ./data:/data
     ports:
       - 8989:8989
     restart: unless-stopped
@@ -43,24 +42,23 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - /mnt/hdd/radarr:/config
-      - /mnt/hdd/media:/movies
-      - /mnt/hdd/media/complete/radarr:/downloads/complete/movies-radarr
+      - ./data/radarr:/config
+      - ./data:/data
     ports:
       - 7878:7878
     restart: unless-stopped
     networks:
       media-server:
         ipv4_address: 10.5.0.7
-  overseerr:
-    image: lscr.io/linuxserver/overseerr:latest
-    container_name: overseerr
+  jellyseerr:
+    image: fallenbagel/jellyseerr:preview-music-support
+    container_name: jellyseerr
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - /mnt/hdd/overseer:/config
+      - ./data/jellyseerr:/config
     ports:
       - 5055:5055
     restart: unless-stopped
@@ -75,7 +73,7 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - /mnt/hdd/powlarr:/config
+      - ./data/powlarr:/config
     ports:
       - 9696:9696
     restart: unless-stopped
@@ -89,35 +87,21 @@ services:
       - 8096:8096/tcp
       - 7359:7359/udp
     volumes:
-      - /mnt/hdd/jellyfin/config:/config
-      - /mnt/hdd/jellyfin/cache:/cache
+      - ./data/jellyfin/config:/config
+      - ./data/jellyfin/cache:/cache
       - type: bind
-        source: /mnt/hdd/media
+        source: ./data/media
         target: /media
         read_only: true
-      # Optional - extra fonts to be used during transcoding with subtitle burn-in
       - type: bind
-        source: /mnt/hdd/fonts
+        source: ./data/fonts
         target: /usr/local/share/fonts/custom
         read_only: true
     restart: 'unless-stopped'
-    # Optional - alternative address used for autodiscovery
     environment:
       - JELLYFIN_PublishedServerUrl=http://tv.gyurus.hu
-    # Optional - may be necessary for docker healthcheck to pass if running in host network mode
     extra_hosts:
       - 'host.docker.internal:host-gateway'
-  jellyfin-auto-collections:
-    image: ghcr.io/ghomashudson/jellyfin-auto-collections:latest
-    container_name: jellyfin-auto-collections
-    environment:
-      - CRONTAB=10 * * * *
-      - TZ=Europe/Budapest
-      - JELLYFIN_SERVER_URL=http://jellyfin:8096
-      - JELLYFIN_API_KEY=ef6f7f4f7d5c478dae00828076283ab2
-      - JELLYFIN_USER_ID=b0fd141a59634beb9fd651db4abc350f
-    volumes:
-      - /mnt/hdd/jellyfin-auto-collections/config:/app/config
   plex:
     image: plexinc/pms-docker:latest
     privileged: true
@@ -132,9 +116,81 @@ services:
       - ADVERTISE_IP=https://stream.gyurus.hu
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /mnt/hdd/plexmediaserver:/config
-      - /mnt/hdd/media:/mnt/tv
-      - /mnt/hdd/media:/mnt/movies
+      - ./data/plexmediaserver:/config
+      - ./data/media:/mnt/tv
+      - ./data/media:/mnt/movies
+    restart: unless-stopped
+  homarr:
+    container_name: homarr
+    image: ghcr.io/homarr-labs/homarr:latest
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data/homarr:/appdata
+    environment:
+      - SECRET_ENCRYPTION_KEY=f3f63ef1606dde447d19e784b0b2528b2b9a895215ed7e48d96beeab774a251c
+    ports:
+      - '7575:7575'
+  profilarr:
+    image: santiagosayshey/profilarr:latest
+    container_name: profilarr
+    ports:
+      - 6868:6868
+    volumes:
+      - ./data/profilarr:/config
+    environment:
+      - TZ=Europe/Budapest
+    restart: unless-stopped
+  wizarr:
+    container_name: wizarr
+    image: ghcr.io/wizarrrr/wizarr
+    ports:
+      - 5690:5690
+    volumes:
+      - ./data/wizarr:/data
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - DISABLE_BUILTIN_AUTH=false
+      - TZ=Europe/Budapest
+  navidrome:
+    image: deluan/navidrome:latest
+    user: 1000:1000
+    ports:
+      - "4533:4533"
+    restart: unless-stopped
+    volumes:
+      - "./navidome:/data"
+      - "./data/music:/music:ro"
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - ./data/lidarr:/config
+      - ./data/music:/music
+      - ./data:/data
+    ports:
+      - 8686:8686
+    restart: unless-stopped
+  sonashow:
+    image: thewicklowwolf/sonashow:latest
+    container_name: sonashow
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - root_folder_path=/data/tv
+      - sonarr_api_key=a2f29a5930a14826add0616ae0dc5ca1
+      - sonarr_address=http://192.168.1.85:8989
+    volumes:
+      - ./data/sonashow:/sonashow/config
+      - ./data/media/:/data
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 5000:5000
     restart: unless-stopped
 networks:
   media-server:

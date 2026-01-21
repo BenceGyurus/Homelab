@@ -64,9 +64,9 @@ resource "proxmox_virtual_environment_download_file" "ubuntu_img" {
 }
 
 # VM elkészítése az erőforrások és a konfiguráció megadásával
-resource "proxmox_virtual_environment_vm" "torrent_server" {
+resource "proxmox_virtual_environment_vm" "torrent" {
   node_name = "proxmox"
-  name      = "torrent-server"
+  name      = "torrent"
   started   = true
 
   agent{
@@ -80,20 +80,20 @@ resource "proxmox_virtual_environment_vm" "torrent_server" {
   }
 
   memory {
-    dedicated = 3276
+    dedicated = 16384
   }
 
 
   disk {
-    datastore_id = "storage"
+    datastore_id = "torrent"
     file_id      = proxmox_virtual_environment_download_file.ubuntu_img.id
     interface    = "scsi0"
   }
 
   disk {
     interface    = "scsi1"
-    datastore_id = "storage"
-    size         = 800
+    datastore_id = "torrent"
+    size         = 400
   }
 
   network_device {
@@ -110,7 +110,7 @@ resource "proxmox_virtual_environment_vm" "torrent_server" {
 
   ip_config {
     ipv4 {
-      address = "192.168.1.84/24"
+      address = "192.168.1.85/24"
       gateway = "192.168.1.1"
     }
   }
@@ -122,12 +122,12 @@ resource "proxmox_virtual_environment_vm" "torrent_server" {
 resource "null_resource" "docker_setup_and_run" {
   # Csak akkor indul el ha a VM elkészült
   # HIBA a qemu-guest-agent telepítése után azonnal csatlakozik, de a qemu-guest-agent nincs benne a telepített image-ben így azt manuálisan kell telepíteni és elindítani
-  depends_on = [proxmox_virtual_environment_vm.torrent_server]
+  depends_on = [proxmox_virtual_environment_vm.torrent]
 
   # SSH kapcsolat beállítása a VM-hez
   connection {
     type        = "ssh"
-    host        = "192.168.1.84"
+    host        = "192.168.1.85"
     user        = "bence"
     private_key = file("~/.ssh/id_ed25519")
     timeout     = "2m"
