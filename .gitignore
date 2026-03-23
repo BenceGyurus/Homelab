@@ -18,3 +18,8 @@ override.tf.json
 .DS_Store
 *Series.yaml
 mail-drop/config.json
+liteLLM/config.yaml
+maildrop/config.json
+*pve.yml
+torrent/*
+seafile/garage.toml

@@ -9,7 +9,7 @@ services:
     volumes:
       - ./data/tramission:/config
       - ./data:/data
-      - ./data/transmission/watch:/watch 
+      - ./data/transmission/watch:/watch
     ports:
       - 9091:9091
       - 51413:51413
@@ -50,21 +50,6 @@ services:
     networks:
       media-server:
         ipv4_address: 10.5.0.7
-  jellyseerr:
-    image: fallenbagel/jellyseerr:preview-music-support
-    container_name: jellyseerr
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
-    volumes:
-      - ./data/jellyseerr:/config
-    ports:
-      - 5055:5055
-    restart: unless-stopped
-    networks:
-      media-server:
-        ipv4_address: 10.5.0.8
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
@@ -97,18 +82,18 @@ services:
         source: ./data/fonts
         target: /usr/local/share/fonts/custom
         read_only: true
-    restart: 'unless-stopped'
+    restart: "unless-stopped"
     environment:
       - JELLYFIN_PublishedServerUrl=http://tv.gyurus.hu
     extra_hosts:
-      - 'host.docker.internal:host-gateway'
+      - "host.docker.internal:host-gateway"
   plex:
     image: plexinc/pms-docker:latest
     privileged: true
     container_name: plex
     network_mode: host
     devices:
-    - /dev/bus/usb:/dev/bus/usb
+      - /dev/bus/usb:/dev/bus/usb
     environment:
       - PUID=1000
       - PGID=1000
@@ -120,78 +105,98 @@ services:
       - ./data/media:/mnt/tv
       - ./data/media:/mnt/movies
     restart: unless-stopped
-  homarr:
-    container_name: homarr
-    image: ghcr.io/homarr-labs/homarr:latest
+  komga:
+    image: gotson/komga
+    container_name: komga
+    volumes:
+      - type: bind
+        source: /home/bence/torrent/data/komga
+        target: /config
+      - type: bind
+        source: /home/bence/torrent/data/downloads/complete/books
+        target: /data
+    ports:
+      - 25600:25600
+    user: "1000:1000"
     restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./data/homarr:/appdata
-    environment:
-      - SECRET_ENCRYPTION_KEY=f3f63ef1606dde447d19e784b0b2528b2b9a895215ed7e48d96beeab774a251c
-    ports:
-      - '7575:7575'
-  profilarr:
-    image: santiagosayshey/profilarr:latest
-    container_name: profilarr
-    ports:
-      - 6868:6868
-    volumes:
-      - ./data/profilarr:/config
-    environment:
-      - TZ=Europe/Budapest
-    restart: unless-stopped
-  wizarr:
-    container_name: wizarr
-    image: ghcr.io/wizarrrr/wizarr
-    ports:
-      - 5690:5690
-    volumes:
-      - ./data/wizarr:/data
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - DISABLE_BUILTIN_AUTH=false
-      - TZ=Europe/Budapest
   navidrome:
     image: deluan/navidrome:latest
-    user: 1000:1000
+    user: 1001:1001 # should be owner of volumes
+    env_file:
+      - .env
     ports:
       - "4533:4533"
     restart: unless-stopped
     volumes:
-      - "./navidome:/data"
-      - "./data/music:/music:ro"
-  lidarr:
-    image: lscr.io/linuxserver/lidarr:latest
-    container_name: lidarr
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
-    volumes:
-      - ./data/lidarr:/config
-      - ./data/music:/music
-      - ./data:/data
-    ports:
-      - 8686:8686
+      - "/home/bence/torrent/data/navidome:/data"
+      - "/home/bence/torrent/data/media/music:/music:ro"
+  spooty:
+    image: raiper34/spooty:latest
+    container_name: spooty
     restart: unless-stopped
-  sonashow:
-    image: thewicklowwolf/sonashow:latest
-    container_name: sonashow
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - root_folder_path=/data/tv
-      - sonarr_api_key=a2f29a5930a14826add0616ae0dc5ca1
-      - sonarr_address=http://192.168.1.85:8989
-    volumes:
-      - ./data/sonashow:/sonashow/config
-      - ./data/media/:/data
-      - /etc/localtime:/etc/localtime:ro
     ports:
-      - 5000:5000
+      - "3000:3000"
+    volumes:
+      - /home/bence/torrent/data/music:/spooty/backend/downloads
+    env_file:
+      - .env
+
+  
+  feishin:
+    image: ghcr.io/jeffvli/feishin:latest
+    container_name: feishin
+    ports:
+      - "9180:9180"
     restart: unless-stopped
+  
+  redis:
+    image: redis:7-alpine
+    container_name: spotiarr-redis
+    restart: unless-stopped
+    volumes:
+      - ./redis:/data
+  
+  spotiarr:
+    image: mralexandersaavedra/spotiarr:latest
+    container_name: spotiarr
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    volumes:
+      - /home/bence/torrent/data/spotiarr:/spotiarr/config
+      - /home/bence/torrent/data/media/music:/downloads
+    environment:
+      - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
+      - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
+      - SPOTIFY_REDIRECT_URI=https://spot.gyurus.hu/api/auth/spotify/callback
+      # Public IP or Domain where SpotiArr will be accessed.
+      # Required for Spotify Auth Redirect.
+      - PUBLIC_HOST=192.168.1.85
+    depends_on:
+      - redis
+  
+
+  aonsoku:
+    container_name: aonsoku
+    image: ghcr.io/victoralvesf/aonsoku:latest
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+
+  maintainerr:
+        image: ghcr.io/maintainerr/maintainerr:latest # or maintainerr/maintainerr:latest
+        container_name: maintainerr
+        user: 1000:1000
+        volumes:
+          - type: bind
+            source: ./data/media
+            target: /opt/data
+        environment:
+          - TZ=Europe/Budapest
+        ports:
+          - 6246:6246
+        restart: unless-stopped
+
 networks:
   media-server:
     name: media-server

@@ -1,0 +1,70 @@
+version: "3.9"
+
+services:
+  broker:
+    image: redis:8
+    container_name: paperless_redis
+    restart: unless-stopped
+    volumes:
+      - redisdata:/data
+    networks:
+      - internal
+
+  db:
+    image: postgres:16
+    container_name: paperless_db
+    restart: unless-stopped
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: paperless
+    networks:
+      - internal
+
+  webserver:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    container_name: paperless_app
+    restart: unless-stopped
+    depends_on:
+      - db
+      - broker
+
+    networks:
+      - internal
+      - proxy
+
+    volumes:
+      - /mnt/hdd/paperless/data:/usr/src/paperless/data
+      - /mnt/hdd/paperless/media:/usr/src/paperless/media
+      - /mnt/hdd/paperless/export:/usr/src/paperless/export
+      - /mnt/hdd/paperless/consume:/usr/src/paperless/consume
+
+    environment:
+      PAPERLESS_REDIS: redis://broker:6379
+      PAPERLESS_DBHOST: db
+      PAPERLESS_DBUSER: paperless
+      PAPERLESS_DBPASS: paperless
+      PAPERLESS_DBNAME: paperless
+      PAPERLESS_URL: https://paperless.gyurus.hu
+      PAPERLESS_TRUSTED_PROXIES: 172.16.0.0/12
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.paper.entrypoints=web"
+      - "traefik.http.routers.paper.rule=Host(`paperless.gyurus.hu`)"
+      - "traefik.http.services.paper.loadbalancer.server.port=8000"
+      - "traefik.http.middlewares.paper-headers.headers.customrequestheaders.X-Forwarded-Proto=http"
+      - "traefik.http.routers.paper.middlewares=paper-headers"
+
+volumes:
+  pgdata:
+  redisdata:
+
+networks:
+  internal:
+    driver: bridge
+  proxy:
+    external: true

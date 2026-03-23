@@ -1,0 +1,23 @@
+version: "3.8"
+name: docs
+
+services:
+  docs-server:
+    image: ghcr.io/bencegyurus/gyurus-docs:sha-c18695b
+    networks:
+      - internal
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.docs.entrypoints=web"
+      - "traefik.http.routers.docs.rule=Host(`docs.gyurus.hu`)"
+      - "traefik.http.services.docs.loadbalancer.server.port=80"
+      - "traefik.http.middlewares.docs-headers.headers.customrequestheaders.X-Forwarded-Proto=http"
+      - "traefik.http.routers.docs.middlewares=docs-headers"
+    restart: always
+networks:
+  internal:
+    driver: bridge
+  proxy:
+    external: true

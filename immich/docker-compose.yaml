@@ -33,7 +33,7 @@ services:
     #   file: hwaccel.transcoding.yml
     #   service: cpu # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
     environment:
-      - IMMICH_MACHINE_LEARNING_URL=http://immich-machine-learning:3003
+      - IMMICH_MACHINE_LEARNING_URL=http://immich_machine_learning:3003
       - UPLOAD_LOCATION=/mnt/hdd/library
       - THUMB_LOCATION=/mnt/hdd/immich-thumbs
     volumes:
@@ -105,7 +105,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 4G
+          cpus: "5"
+          memory: 5g
 
   immich-stack:
     networks:

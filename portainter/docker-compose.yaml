@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 services:
   portainer:
     image: portainer/portainer-ce:latest
@@ -6,8 +6,8 @@ services:
     restart: always
     ports:
       - "8000:8000"
-      - "9443:9443"
-      - "9000:9000"
+      - "9444:9443"
+      - "9001:9000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /mnt/hdd/portainer:/data

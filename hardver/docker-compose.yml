@@ -1,0 +1,17 @@
+services:
+  hardverapro-bot:
+    image: ghcr.io/bencegyurus/hardverapo-figyelo:latest
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    env_file:
+      - .env
+    volumes:
+      - /mnt/hdd/data:/app_root/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

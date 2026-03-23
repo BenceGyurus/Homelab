@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  db:
+    image: timescale/timescaledb:latest-pg16
+    container_name: solaris_db
+    env_file:
+      - .env
+    networks:
+      - internal
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-solaris}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-solaris_pass}
+      - POSTGRES_DB=${POSTGRES_DB:-solaris}
+    volumes:
+      - /mnt/hdd/napelem:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-solaris} -d ${POSTGRES_DB:-solaris}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  backend:
+    image: ghcr.io/bencegyurus/solaris-backend:latest
+    networks:
+      - internal
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://solaris:solaris_pass@db:5432/solaris}
+      - SECRET_KEY=${SECRET_KEY:-dev_secret_key_change_me}
+      - INVERTER_IP=${INVERTER_IP}
+      - INVERTER_SERIAL=${INVERTER_SERIAL}
+      - INVERTER_PORT=${INVERTER_PORT}
+      - INVERTER_NAME=${INVERTER_NAME}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend: 
+    image: ghcr.io/bencegyurus/solaris-frontend:latest
+    container_name: solaris_frontend
+    networks:
+      - internal
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.solar.entrypoints=web"
+      - "traefik.http.routers.solar.rule=Host(`napelem.gyurus.hu`)"
+      - "traefik.http.services.solar.loadbalancer.server.port=3000"
+      - "traefik.http.middlewares.solar-headers.headers.customrequestheaders.X-Forwarded-Proto=http"
+      - "traefik.http.routers.solar.middlewares=solar-headers"
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8000
+      - NEXT_PUBLIC_API_URL=https://napelem.gyurus.hu
+      - HOSTNAME=0.0.0.0
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+
+networks:
+  internal:
+    driver: bridge
+  proxy:
+    external: true

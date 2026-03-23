@@ -1,0 +1,15 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: immich-ml-ingress
+  namespace: default
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`immichml.gyurus.hu.local`)
+      kind: Rule
+      services:
+        - name: immich-machine-learning
+          port: 80
