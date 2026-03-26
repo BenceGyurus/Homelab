@@ -26,7 +26,7 @@ services:
       - ${UPLOAD_LOCATION}:/root/.affine/storage
       - ${CONFIG_LOCATION}:/root/.affine/config
     env_file:
-      - .env
+      - ../stack.env
     environment:
       - REDIS_SERVER_HOST=redis
       - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWORD}@postgres:5432/${DB_DATABASE:-affine}
@@ -44,7 +44,7 @@ services:
     networks:
       - internal
     env_file:
-      - .env
+      - ../stack.env
     environment:
       - REDIS_SERVER_HOST=redis
       - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWORD}@postgres:5432/${DB_DATABASE:-affine}
