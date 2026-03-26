@@ -9,7 +9,7 @@ services:
       - "9444:9443"
       - "9001:9000"
     volumes:
-      - /mnt/hdd/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - /mnt/hdd/prometheus:/prometheus
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /mnt/hdd/portainer:/data
 volumes:
   portainer_data:
