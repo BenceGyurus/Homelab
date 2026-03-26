@@ -3,7 +3,7 @@ services:
     networks:
       - internal
     env_file:
-      - .env
+      - ../stack.env
     environment:
       POSTGRES_DB: ${PG_DB:-authentik}
       POSTGRES_PASSWORD: ${PG_PASS:?database password required}
@@ -44,7 +44,7 @@ services:
       redis:
         condition: service_healthy
     env_file:
-      - .env
+      - ../stack.env
     environment:
       AUTHENTIK_REDIS__HOST: redis
       AUTHENTIK_POSTGRESQL__HOST: postgresql
@@ -93,7 +93,7 @@ services:
     networks:
       - internal
     env_file:
-      - .env
+      - ../stack.env
     environment:
       AUTHENTIK_REDIS__HOST: redis
       AUTHENTIK_POSTGRESQL__HOST: postgresql
