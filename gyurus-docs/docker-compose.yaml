@@ -8,7 +8,7 @@ services:
       - internal
       - proxy
     port:
-      - "81:80"
+      - "3010:80"
     restart: always
 networks:
   internal:
