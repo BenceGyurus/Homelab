@@ -6,12 +6,6 @@ services:
     image: ghcr.io/bencegyurus/gyurus-docs:sha-c18695b
     networks:
       - internal
-      - proxy
     port:
       - "3010:80"
     restart: always
-networks:
-  internal:
-    driver: bridge
-  proxy:
-    external: true
