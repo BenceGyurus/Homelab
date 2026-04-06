@@ -7,14 +7,8 @@ services:
     networks:
       - internal
       - proxy
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=proxy"
-      - "traefik.http.routers.docs.entrypoints=web"
-      - "traefik.http.routers.docs.rule=Host(`docs.gyurus.hu`)"
-      - "traefik.http.services.docs.loadbalancer.server.port=80"
-      - "traefik.http.middlewares.docs-headers.headers.customrequestheaders.X-Forwarded-Proto=http"
-      - "traefik.http.routers.docs.middlewares=docs-headers"
+    port:
+      - "81:80"
     restart: always
 networks:
   internal:
