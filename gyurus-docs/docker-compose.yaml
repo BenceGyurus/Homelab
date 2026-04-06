@@ -6,6 +6,6 @@ services:
     image: ghcr.io/bencegyurus/gyurus-docs:sha-c18695b
     networks:
       - internal
-    port:
+    ports:
       - "3010:80"
     restart: always
