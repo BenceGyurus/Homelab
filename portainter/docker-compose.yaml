@@ -10,6 +10,7 @@ services:
     ports:
       - "8000:8000"
       - "9444:9443"
+      - "9000:9000"
     environment:
       - TRUSTED_ORIGINS=portainer.gyurus.hu
     volumes:
