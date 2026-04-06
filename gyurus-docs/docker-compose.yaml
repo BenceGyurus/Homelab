@@ -4,8 +4,6 @@ name: docs
 services:
   docs-server:
     image: ghcr.io/bencegyurus/gyurus-docs:sha-c18695b
-    networks:
-      - internal
     ports:
       - "3010:80"
     restart: always
