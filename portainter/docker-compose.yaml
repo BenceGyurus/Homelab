@@ -4,6 +4,9 @@ services:
     image: portainer/portainer-ce:latest
     container_name: portainer
     restart: always
+    networks:
+      - "proxy"
+      - "internal"
     ports:
       - "8000:8000"
       - "9444:9443"
@@ -18,3 +21,10 @@ services:
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
 volumes:
   portainer_data:
+
+
+networks:
+  internal:
+    driver: bridge
+  proxy:
+    external: true
