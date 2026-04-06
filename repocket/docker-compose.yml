@@ -1,0 +1,7 @@
+version: "3"
+services:
+  repocket:
+    image: repocket/repocket
+    restart: always
+    env_file:
+      - .env

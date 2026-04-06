@@ -7,9 +7,16 @@ services:
     ports:
       - "8000:8000"
       - "9444:9443"
-      - "9001:9000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /mnt/hdd/portainer:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.portainer.entrypoints=web"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.gyurus.hu`)"
+      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+      - "traefik.http.middlewares.portainer-headers.headers.customrequestheaders.X-Forwarded-Proto=http"
+      - "traefik.http.routers.portainer.middlewares=portainer-headers"
 volumes:
   portainer_data:
