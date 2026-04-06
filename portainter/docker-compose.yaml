@@ -16,7 +16,5 @@ services:
       - "traefik.http.routers.portainer.entrypoints=web"
       - "traefik.http.routers.portainer.rule=Host(`portainer.gyurus.hu`)"
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
-      - "traefik.http.middlewares.portainer-headers.headers.customrequestheaders.X-Forwarded-Proto=http"
-      - "traefik.http.routers.portainer.middlewares=portainer-headers"
 volumes:
   portainer_data:
