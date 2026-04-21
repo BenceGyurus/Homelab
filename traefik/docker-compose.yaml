@@ -18,6 +18,9 @@ services:
       - "--providers.file.directory=/etc/traefik/dynamic"
       - "--providers.file.watch=true"
       - "--log.level=DEBUG"
+      - "--metrics.prometheus=true"
+      - "--metrics.prometheus.buckets=0.1,0.3,1.2,5.0"
+      - "--providers.docker.watch"
     environment:
       - DOCKER_API_VERSION=1.44
     ports:
