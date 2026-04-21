@@ -61,6 +61,21 @@ services:
       - prometheus
     restart: unless-stopped
 
+  adguard-exporter:
+    image: ghcr.io/henrywhitaker3/adguard-exporter:latest
+    container_name: adguard-exporter
+    env_file:
+      - path: ../stack.env
+        required: true
+    ports:
+      - "9618:9618"
+    environment:
+      ADGUARD_SERVERS: ${ADGUARD_SERVERS}
+      ADGUARD_USERNAMES: ${ADGUARD_USERNAMES}
+      ADGUARD_PASSWORDS: ${ADGUARD_PASSWORDS}
+      INTERVAL: "15s"
+    restart: unless-stopped
+
 networks:
   internal:
     driver: bridge
