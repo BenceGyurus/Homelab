@@ -22,16 +22,7 @@ services:
       - type: volume
         source: influxdb2-config
         target: /mnt/hdd/influxdb2-config
-secrets:
-  influxdb2-admin-username:
-    file: /mnt/hdd/influx/.env.influxdb2-admin-username
-  influxdb2-admin-password:
-    file: /mnt/hdd/influx/.env.influxdb2-admin-password
-  influxdb2-admin-token:
-    file: /mnt/hdd/influx/.env.influxdb2-admin-token
-volumes:
-  influxdb2-data:
-  influxdb2-config:
+
   # --- Prometheus ---
   prometheus:
     image: prom/prometheus:latest
@@ -75,3 +66,13 @@ networks:
     driver: bridge
   proxy:
     external: true
+secrets:
+  influxdb2-admin-username:
+    file: /mnt/hdd/influx/.env.influxdb2-admin-username
+  influxdb2-admin-password:
+    file: /mnt/hdd/influx/.env.influxdb2-admin-password
+  influxdb2-admin-token:
+    file: /mnt/hdd/influx/.env.influxdb2-admin-token
+volumes:
+  influxdb2-data:
+  influxdb2-config:
