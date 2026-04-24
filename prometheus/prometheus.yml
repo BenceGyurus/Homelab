@@ -68,11 +68,11 @@ scrape_configs:
     static_configs:
       - targets: ['host.docker.internal:9323']
   
-  - job_name: 'cadvisor'
+  - job_name: 'cadvisor-torrent'
     static_configs:
       - targets: ['192.168.1.85:8082']
 
-  - job_name: 'node'
+  - job_name: 'node-torrent'
     static_configs:
       - targets: ['192.168.1.85:9101']
 
