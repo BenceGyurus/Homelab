@@ -242,6 +242,14 @@ services:
       # Optional: Customize the port (defaults to 5000 if not set)
       - SUGGESTARR_PORT=${SUGGESTARR_PORT:-5000}
 
+  scraparr:
+    image: ghcr.io/thecfu/scraparr
+    container_name: scraparr
+    ports:
+      - "7100:7100"
+    volumes:
+      - ./data/scraparr/config.yaml:/scraparr/config/config.yaml:ro
+
 
 networks:
   media-server:

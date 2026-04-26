@@ -5,8 +5,10 @@ services:
     image: redis:8
     container_name: paperless_redis
     restart: unless-stopped
+    env_file:
+      - ../stack.env
     volumes:
-      - redisdata:/data
+      - /mnt/hdd/paperless/redisdata:/data
     networks:
       - internal
 
@@ -14,6 +16,8 @@ services:
     image: postgres:16
     container_name: paperless_db
     restart: unless-stopped
+    env_file:
+      - ../stack.env
     volumes:
       - pgdata:/var/lib/postgresql/data
     environment:
@@ -27,6 +31,8 @@ services:
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
     container_name: paperless_app
     restart: unless-stopped
+    env_file:
+      - ../stack.env
     depends_on:
       - db
       - broker
