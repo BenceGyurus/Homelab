@@ -4,5 +4,21 @@ services:
     restart: unless-stopped
     volumes:
       - /mnt/hdd/uptime-kuma:/app/data
-    ports:
-      - "0.0.0.0:3001:3001"
+    networks:
+      - internal
+      - proxy
+    
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.paper.entrypoints=web"
+      - "traefik.http.routers.paper.rule=Host(`status.gyurus.hu`)"
+      - "traefik.http.services.paper.loadbalancer.server.port=3001"
+      - "traefik.http.middlewares.paper-headers.headers.customrequestheaders.X-Forwarded-Proto=http"
+      - "traefik.http.routers.paper.middlewares=paper-headers"
+
+networks:
+  internal:
+    driver: bridge
+  proxy:
+    external: true
