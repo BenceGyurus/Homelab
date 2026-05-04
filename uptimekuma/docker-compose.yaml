@@ -4,6 +4,8 @@ services:
     restart: unless-stopped
     volumes:
       - /mnt/hdd/uptime-kuma:/app/data
+    environment:
+      - URL=https://status.gyurus.hu
     networks:
       - internal
       - proxy
