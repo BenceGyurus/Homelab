@@ -13,11 +13,11 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
-      - "traefik.http.routers.paper.entrypoints=web"
-      - "traefik.http.routers.paper.rule=Host(`status.gyurus.hu`)"
-      - "traefik.http.services.paper.loadbalancer.server.port=3001"
-      - "traefik.http.middlewares.paper-headers.headers.customrequestheaders.X-Forwarded-Proto=http"
-      - "traefik.http.routers.paper.middlewares=paper-headers"
+      - "traefik.http.routers.uptime.entrypoints=web"
+      - "traefik.http.routers.uptime.rule=Host(`status.gyurus.hu`)"
+      - "traefik.http.services.uptime.loadbalancer.server.port=3001"
+      - "traefik.http.middlewares.uptime-headers.headers.customrequestheaders.X-Forwarded-Proto=http"
+      - "traefik.http.routers.uptime.middlewares=uptime-headers"
 
 networks:
   internal:
