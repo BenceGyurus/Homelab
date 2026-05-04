@@ -7,6 +7,14 @@ services:
     restart: unless-stopped
     ports:
       - "8082:8080"
+    command:
+      - --housekeeping_interval=30s
+      - --max_housekeeping_interval=60s
+      - --allow_dynamic_housekeeping=true
+      - --global_housekeeping_interval=1m
+      - --docker_only=true
+      - --disable_root_cgroup_stats=true
+      - --disable_metrics=accelerator,cpu_topology,memory_numa,tcp,udp,advtcp,process,sched,hugetlb,referenced_memory,resctrl,percpu
     privileged: true
     volumes:
       - /:/rootfs:ro
