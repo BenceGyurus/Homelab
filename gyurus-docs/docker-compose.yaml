@@ -3,7 +3,7 @@ name: docs
 
 services:
   docs-server:
-    image: ghcr.io/bencegyurus/gyurus-docs:sha-c18695b
+    image: ghcr.io/bencegyurus/gyurus-docs:latest
     ports:
       - "3010:80"
     restart: always
