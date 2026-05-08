@@ -137,8 +137,12 @@ services:
       - "traefik.http.middlewares.seadoc-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
       - "traefik.http.routers.seadoc.middlewares=seadoc-headers"
       - "traefik.http.routers.seadoc.priority=100"
+
+      - "traefik.http.middlewares.seadoc-strip.stripprefix.prefixes=/sdoc-server"
+      - "traefik.http.middlewares.seadoc-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.routers.seadoc.middlewares=seadoc-strip,seadoc-headers"
       
-      - "traefik.http.routers.seadoc-socket.rule=Host(`seafile.gyurus.hu`) && PathPrefix(`/socket.io`)"
+      - "traefik.http.routers.seadoc-socket.rule=Host(`drive.gyurus.hu`) && PathPrefix(`/socket.io`)"
       - "traefik.http.routers.seadoc-socket.entrypoints=websecure"
       - "traefik.http.routers.seadoc-socket.tls=true"
       - "traefik.http.routers.seadoc-socket.tls.certresolver=letsencrypt"
