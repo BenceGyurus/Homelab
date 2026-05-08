@@ -154,6 +154,47 @@ services:
       - internal
       - proxy
 
+  notification-server:
+    image: ${NOTIFICATION_SERVER_IMAGE:-seafileltd/notification-server:13.0-latest}
+    container_name: notification-server
+    restart: always
+    volumes:
+      - ${SEAFILE_VOLUME:-/opt/seafile-data}/seafile/logs:/shared/seafile/logs
+    # ports:
+    #   - "8083:8083"
+    environment:
+      - SEAFILE_MYSQL_DB_HOST=${SEAFILE_MYSQL_DB_HOST:-db}
+      - SEAFILE_MYSQL_DB_PORT=${SEAFILE_MYSQL_DB_PORT:-3306}
+      - SEAFILE_MYSQL_DB_USER=${SEAFILE_MYSQL_DB_USER:-seafile}
+      - SEAFILE_MYSQL_DB_PASSWORD=${SEAFILE_MYSQL_DB_PASSWORD:?Variable is not set or empty}
+      - SEAFILE_MYSQL_DB_CCNET_DB_NAME=${SEAFILE_MYSQL_DB_CCNET_DB_NAME:-ccnet_db}
+      - SEAFILE_MYSQL_DB_SEAFILE_DB_NAME=${SEAFILE_MYSQL_DB_SEAFILE_DB_NAME:-seafile_db}
+      - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY:?Variable is not set or empty}
+      - SEAFILE_LOG_TO_STDOUT=${SEAFILE_LOG_TO_STDOUT:-false}
+      - NOTIFICATION_SERVER_LOG_LEVEL=${NOTIFICATION_SERVER_LOG_LEVEL:-info}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+
+      - "traefik.http.routers.notification.entrypoints=web"
+      - "traefik.http.routers.notification.rule=Host(`drive.gyurus.hu`) && (Path(`/notification`) || PathPrefix(`/notification/`))"
+      - "traefik.http.routers.notification.priority=100"
+      - "traefik.http.routers.notification.service=notification-svc"
+
+      - "traefik.http.services.notification-svc.loadbalancer.server.port=8083"
+
+      - "traefik.http.middlewares.notification-strip.stripprefix.prefixes=/notification"
+      - "traefik.http.middlewares.notification-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.routers.notification.middlewares=notification-strip,notification-headers"
+    depends_on:
+      db:
+        condition: service_healthy
+      seafile:
+        condition: service_healthy
+    networks:
+      - proxy
+      - internal
+
 
 networks:
   internal:
