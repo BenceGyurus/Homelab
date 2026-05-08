@@ -39,8 +39,11 @@ services:
       db:
         condition: service_healthy
     networks:
-      - seafile-net
+      - internal
+      - proxy
 
 networks:
-  seafile-net:
-    name: seafile-net
+  internal:
+    driver: bridge
+  proxy:
+    external: true
