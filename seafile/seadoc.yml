@@ -19,16 +19,22 @@ services:
       - NON_ROOT=${NON_ROOT:-false}
       - SEAHUB_SERVICE_URL=${SEAFILE_SERVICE_URL:-http://seafile}
     labels:
-      caddy: ${SEAFILE_SERVER_PROTOCOL:-http}://${SEAFILE_SERVER_HOSTNAME:?Variable is not set or empty}
-      caddy.@ws.0_header: "Connection *Upgrade*"
-      caddy.@ws.1_header: "Upgrade websocket"
-      caddy.0_reverse_proxy: "@ws {{upstreams 80}}"
-      caddy.1_handle_path: "/socket.io/*"
-      caddy.1_handle_path.0_rewrite: "* /socket.io{uri}"
-      caddy.1_handle_path.1_reverse_proxy: "{{upstreams 80}}"
-      caddy.2_handle_path: "/sdoc-server/*"
-      caddy.2_handle_path.0_rewrite: "* {uri}"
-      caddy.2_handle_path.1_reverse_proxy: "{{upstreams 80}}"
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.seadoc.entrypoints=web"
+      - "traefik.http.routers.seadoc.rule=Host(`drive.gyurus.hu`) && (Path(`/sdoc-server`) || PathPrefix(`/sdoc-server/`))"
+      - "traefik.http.services.seadoc-svc.loadbalancer.server.port=80"
+      - "traefik.http.routers.seadoc.service=seadoc-svc"
+      - "traefik.http.middlewares.seadoc-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.routers.seadoc.middlewares=seadoc-headers"
+      - "traefik.http.routers.seadoc.priority=100"
+      
+      - "traefik.http.routers.seadoc-socket.rule=Host(`seafile.gyurus.hu`) && PathPrefix(`/socket.io`)"
+      - "traefik.http.routers.seadoc-socket.entrypoints=websecure"
+      - "traefik.http.routers.seadoc-socket.tls=true"
+      - "traefik.http.routers.seadoc-socket.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.seadoc-socket.priority=100"
+      - "traefik.http.routers.seadoc-socket.service=seadoc-svc"
     depends_on:
       db:
         condition: service_healthy
