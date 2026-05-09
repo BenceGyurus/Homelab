@@ -4,8 +4,6 @@ name: immich-machine-learning
 services:
 
   immich-machine-learning:
-    networks:
-      - internal
     container_name: immich_machine_learning
     image: ghcr.io/immich-app/immich-machine-learning:release-cuda
     volumes:
