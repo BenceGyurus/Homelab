@@ -1,0 +1,21 @@
+immich-machine-learning:
+  networks:
+    - internal
+  container_name: immich_machine_learning
+  image: ghcr.io/immich-app/immich-machine-learning:release-cuda
+  volumes:
+    - /mnt/hdd/immich-model-cache:/cache
+  env_file:
+    - ../stack.env
+  restart: always
+  deploy:
+    resources:
+      reservations:
+        devices:
+          - driver: nvidia
+            count: 1
+            capabilities:
+              - gpu
+      limits:
+        cpus: "2"
+        memory: 10g
