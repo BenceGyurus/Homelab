@@ -34,7 +34,7 @@ services:
     #   file: hwaccel.transcoding.yml
     #   service: cpu # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
     environment:
-      - IMMICH_MACHINE_LEARNING_URL=http://immich_machine_learning:3003
+      - IMMICH_MACHINE_LEARNING_URL=http://192.168.1.46:3003
       - UPLOAD_LOCATION=/mnt/hdd/library
       - THUMB_LOCATION=/mnt/hdd/immich-thumbs
     volumes:
@@ -90,24 +90,6 @@ services:
       - ${DB_DATA_LOCATION:-/mnt/hdd/immich-db}:/var/lib/postgresql/data
     shm_size: 256mb
     restart: always
-
-  immich-machine-learning:
-    networks:
-      - internal
-    container_name: immich_machine_learning
-    image: ghcr.io/immich-app/immich-machine-learning:release
-    volumes:
-      - /mnt/hdd/immich-model-cache:/cache
-    device_cgroup_rules:
-      - "c 189:* rmw"
-    env_file:
-      - ../stack.env
-    restart: always
-    deploy:
-      resources:
-        limits:
-          cpus: "5"
-          memory: 5g
 
   immich-stack:
     networks:

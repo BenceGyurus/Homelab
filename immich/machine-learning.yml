@@ -6,6 +6,8 @@ services:
   immich-machine-learning:
     container_name: immich_machine_learning
     image: ghcr.io/immich-app/immich-machine-learning:release-cuda
+    ports:
+      - "3003:3003"
     volumes:
       - ./immich/immich-model-cache:/cache
     env_file:
