@@ -38,7 +38,7 @@ services:
       - PUID=1000
       - PGID=1000
       - nodeName=CPU_Node
-      - serverIP=tdarr
+      - serverIP=192.168.1.85
       - serverPort=8266
       - inContainer=true
       - ffmpegVersion=7
