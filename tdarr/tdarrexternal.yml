@@ -7,26 +7,17 @@ services:
       - TZ=Europe/Budapest
       - PUID=1000
       - PGID=1000
-      - nodeName=GPU_Node
+      - nodeName=CPU_Node
       - serverIP=192.168.1.85
       - serverPort=8266
       - inContainer=true
       - ffmpegVersion=7
-      - transcodegpuWorkers=1
-      - transcodecpuWorkers=0
+      - transcodegpuWorkers=0 # GPU kikapcsolva
+      - transcodecpuWorkers=2 # CPU bekapcsolva (Ezt a számot nyugodtan átírhatod, attól függően, hány magos a processzorod!)
       - healthcheckgpuWorkers=0
       - healthcheckcpuWorkers=0
-      - NVIDIA_DRIVER_CAPABILITIES=all
-      - NVIDIA_VISIBLE_DEVICES=all
     volumes:
       - /home/bence/tdarr/configs:/app/configs
       - /home/bence/tdarr/logs:/app/logs
       - /mnt/media:/media 
-      - /home/bence/tdarr/temp:/temp 
-    deploy:
-      resources:
-        reservations:
-          devices:
-          - driver: nvidia
-            count: 1
-            capabilities: [gpu] # Nvidia GPU-hoz
+      - /home/bence/tdarr/temp:/temp
