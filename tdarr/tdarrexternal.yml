@@ -19,10 +19,10 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=all
       - NVIDIA_VISIBLE_DEVICES=all
     volumes:
-      - ./configs:/app/configs
-      - ./logs:/app/logs
+      - /home/bence/tdarr/configs:/app/configs
+      - /home/bence/tdarr/logs:/app/logs
       - /mnt/media:/media 
-      - ./temp:/temp 
+      - /home/bence/tdarr/temp:/temp 
     devices:
       - /dev/dri:/dev/dri
     deploy:
