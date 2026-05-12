@@ -23,8 +23,6 @@ services:
       - /home/bence/tdarr/logs:/app/logs
       - /mnt/media:/media 
       - /home/bence/tdarr/temp:/temp 
-    devices:
-      - /dev/dri:/dev/dri
     deploy:
       resources:
         reservations:
