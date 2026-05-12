@@ -1,0 +1,32 @@
+services:
+  tdarr:
+    container_name: tdarr
+    image: ghcr.io/haveagitgat/tdarr:latest
+    restart: unless-stopped
+    network_mode: bridge
+    ports:
+      - 8265:8265
+      - 8266:8266
+    environment:
+      - TZ=Europe/Budapest
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK_SET=002
+      - serverIP=0.0.0.0
+      - serverPort=8266
+      - webUIPort=8265
+      - internalNode=true
+      - inContainer=true
+      - ffmpegVersion=7
+      - nodeName=InternalNode
+      - auth=false
+      - openBrowser=true
+      - maxLogSizeMB=10
+      - cronPluginUpdate=
+    volumes:
+      - /home/bence/torrent/data/tdarr/server:/app/server
+      - /home/bence/torrent/data/tdarr/configs:/app/configs
+      - /home/bence/torrent/data/tdarr/logs:/app/logs
+      - /home/bence/torrent/data/media:/media
+      - /home/bence/torrent/data/tdarr/temp:/temp
+
