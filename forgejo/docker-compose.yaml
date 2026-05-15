@@ -21,7 +21,7 @@ services:
       - forgejo
       - proxy
     volumes:
-      - /mnt/hdd/forgejo:/data
+      - /mnt/hdd/forgejo/data:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     labels:
@@ -46,4 +46,4 @@ services:
     networks:
       - forgejo
     volumes:
-      - ./postgres:/var/lib/postgresql/data#
+      - /mnt/hdd/forgejo/db:/var/lib/postgresql/data#
