@@ -2,24 +2,6 @@
 
 This repository contains the configuration and deployment manifests for a multi-layered home lab environment. The infrastructure is managed through a combination of Docker Compose, Kubernetes (Minikube/Talos), and Terraform for Infrastructure as Code (IaC).
 
-## Architecture Diagrams
-
-### System Overview
-![Infrastructure Diagram](diagrams/infra.png)
-
-### Core Services
-#### Immich (Photo Management)
-![Immich Diagram](diagrams/immich.png)
-
-#### Seafile (File Storage)
-![Seafile Diagram](diagrams/seafile.png)
-
-#### Media & Torrenting
-![Torrent Diagram](diagrams/torrent.png)
-
-#### Monitoring (Grafana)
-![Grafana Diagram](diagrams/grafana.png)
-
 ## Service Directory
 
 The services are organized into functional categories to facilitate management and discovery.
