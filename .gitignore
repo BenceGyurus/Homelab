@@ -24,3 +24,5 @@ maildrop/config.json
 torrent/*
 seafile/garage.toml
 *.env*
+backup/*
+moodle/*

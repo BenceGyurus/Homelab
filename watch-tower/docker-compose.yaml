@@ -1,7 +1,7 @@
 version: "3"
 services:
   watchtower:
-    image: nickfedor/watchtower
+    image: nickfedor/watchtower:1.17.1
     restart: always
     command:
       - --cleanup=true
