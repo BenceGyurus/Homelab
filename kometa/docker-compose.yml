@@ -1,6 +1,0 @@
-services:
-  kometa:
-    image: kometateam/kometa
-    volumes:
-      - /home/bence/torrent/data/kometa/config:/config
-    restart: unless-stopped

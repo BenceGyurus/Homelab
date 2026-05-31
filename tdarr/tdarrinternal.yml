@@ -4,6 +4,7 @@ services:
     image: ghcr.io/haveagitgat/tdarr:latest
     restart: unless-stopped
     network_mode: bridge
+    user: "1000:1000"
     ports:
       - 8265:8265
       - 8266:8266
@@ -29,25 +30,26 @@ services:
       - /home/bence/torrent/data/tdarr/logs:/app/logs
       - /home/bence/torrent/data/media:/media
       - /home/bence/torrent/data/tdarr/temp:/temp
-  tdarr-node:
-    container_name: tdarr-node
-    image: ghcr.io/haveagitgat/tdarr_node:latest
-    restart: unless-stopped
-    environment:
-      - TZ=Europe/Budapest
-      - PUID=1000
-      - PGID=1000
-      - nodeName=CPU_Node
-      - serverIP=192.168.1.85
-      - serverPort=8266
-      - inContainer=true
-      - ffmpegVersion=7
-      - transcodegpuWorkers=0 
-      - transcodecpuWorkers=2 
-      - healthcheckgpuWorkers=0
-      - healthcheckcpuWorkers=0
-    volumes:
-      - /home/bence/torrent/data/tdarr/configs:/app/configs
-      - /home/bence/torrent/data/tdarr/logs:/app/logs
-      - /home/bence/torrent/data/media:/media
-      - /home/bence/torrent/data/tdarr/temp:/temp
+  # tdarr-node:
+  #   user: "1000:1000"
+  #   container_name: tdarr-node
+  #   image: ghcr.io/haveagitgat/tdarr_node:latest
+  #   restart: unless-stopped
+  #   environment:
+  #     - TZ=Europe/Budapest
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - nodeName=CPU_Node
+  #     - serverIP=192.168.1.85
+  #     - serverPort=8266
+  #     - inContainer=true
+  #     - ffmpegVersion=7
+  #     - transcodegpuWorkers=0 
+  #     - transcodecpuWorkers=2 
+  #     - healthcheckgpuWorkers=0
+  #     - healthcheckcpuWorkers=0
+  #   volumes:
+  #     - /home/bence/torrent/data/tdarr/configs:/app/configs
+  #     - /home/bence/torrent/data/tdarr/logs:/app/logs
+  #     - /home/bence/torrent/data/media:/media
+  #     - /home/bence/torrent/data/tdarr/temp:/temp
