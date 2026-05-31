@@ -13,7 +13,7 @@ services:
       - inContainer=true
       - ffmpegVersion=7
       - transcodegpuWorkers=0 # GPU kikapcsolva
-      - transcodecpuWorkers=2 # CPU bekapcsolva (Ezt a számot nyugodtan átírhatod, attól függően, hány magos a processzorod!)
+      - transcodecpuWorkers=4 # CPU bekapcsolva (Ezt a számot nyugodtan átírhatod, attól függően, hány magos a processzorod!)
       - healthcheckgpuWorkers=0
       - healthcheckcpuWorkers=0
     volumes:

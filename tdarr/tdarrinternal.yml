@@ -9,6 +9,8 @@ services:
       - 8265:8265
       - 8266:8266
     environment:
+      - PUID=1000
+      - PGID=1000
       - TZ=Europe/Budapest
       - PUID=${PUID}
       - PGID=${PGID}
@@ -24,6 +26,7 @@ services:
       - openBrowser=true
       - maxLogSizeMB=10
       - cronPluginUpdate=
+      - transcodecpuWorkers=1
     volumes:
       - /home/bence/torrent/data/tdarr/server:/app/server
       - /home/bence/torrent/data/tdarr/configs:/app/configs
