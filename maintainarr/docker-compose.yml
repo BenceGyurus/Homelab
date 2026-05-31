@@ -1,0 +1,12 @@
+services:
+    maintainerr:
+        image: ghcr.io/maintainerr/maintainerr:latest
+        container_name: maintainerr
+        user: 1000:1000
+        volumes:
+          - "/home/bence/torrent/data/media:/data"
+        environment:
+          - TZ=Europe/Budapest
+        ports:
+          - 6246:6246
+        restart: unless-stopped
