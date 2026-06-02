@@ -1,6 +1,6 @@
-sudo docker volume create clam_db && 
-sudo docker run -d -it --rm \
-    --name "clam_container_02" \
-    --mount source=clam_db,target=/var/lib/clamav \
-    --env 'CLAMAV_NO_FRESHCLAMD=true' \
-    clamav/clamav:1.4_base
+apt-get update && apt-get install -y \
+  `# install tools` \
+  gcc make pkg-config python3 python3-pip python3-pytest valgrind cmake \
+  `# install clamav dependencies` \
+  check libbz2-dev libcurl4-openssl-dev libjson-c-dev libmilter-dev \
+  libncurses5-dev libpcre2-dev libssl-dev libxml2-dev zlib1g-dev

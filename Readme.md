@@ -13,6 +13,9 @@ The services are organized into functional categories to facilitate management a
 - **portainer**: Web-based interface for container management.
 - **watch-tower**: Automated updates for running Docker containers.
 - **uptimekuma**: Uptime monitoring and status alerts.
+- **prometheus**: Monitoring and time-series database for metrics.
+- **docker-monitor**: Real-time monitoring for Docker containers.
+- **tugtainer**: Container event notifications and monitoring.
 - **clamAV**: Antivirus engine for scanning file uploads.
 - **homepage**: Unified dashboard for service access.
 
@@ -24,11 +27,17 @@ The services are organized into functional categories to facilitate management a
 
 ### Media & Entertainment
 - **immich**: Self-hosted photo and video management solution.
+- **tdarr**: Distributed media transcoding and library optimization.
 - **torrent**: Stack for managing media downloads and distribution.
+- **cleanuparr**: Automated media library cleanup and optimization.
+- **maintainarr**: Maintenance tools for the *arr suite.
+- **soulsync**: Automated music synchronization service.
 - **mc-server**: Dedicated Minecraft server instance.
+- **crafty**: Web-based Minecraft server manager and dashboard.
 - **hardver**: Automated monitoring for hardware marketplaces.
 
-### AI & Productivity
+### AI, Productivity & Education
+- **forgejo**: Self-hosted git service and development platform.
 - **liteLLM**: Unified proxy for various Large Language Model APIs.
 - **openWebUI**: Interactive interface for local and remote LLMs.
 - **affine**: Unified workspace for notes, tasks, and knowledge management.
@@ -37,6 +46,7 @@ The services are organized into functional categories to facilitate management a
 ### Network & Utilities
 - **searxng**: Privacy-focused metasearch engine.
 - **mail-drop**: Local mail relay or temporary mail service.
+- **repocket**: Passive income network sharing utility.
 - **napelem**: Monitoring system for solar energy production and consumption.
 
 ## Infrastructure as Code (Terraform)
