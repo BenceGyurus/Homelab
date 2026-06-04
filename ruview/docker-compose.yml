@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  wifi-densepose:
+    image: ruvnet/wifi-densepose:latest
+    container_name: ruview_server
+    ports:
+      - "3000:3000"
+    restart: unless-stopped

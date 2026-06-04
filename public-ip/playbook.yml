@@ -1,0 +1,1 @@
+ansible-playbook -i "152.66.211.169," playbook.yml
