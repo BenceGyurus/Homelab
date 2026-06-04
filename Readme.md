@@ -1,75 +1,43 @@
-# Home Lab Infrastructure
+# Home Lab Infrastruktúra
 
-This repository contains the configuration and deployment manifests for a multi-layered home lab environment. The infrastructure is managed through a combination of Docker Compose, Kubernetes (Minikube/Talos), and Terraform for Infrastructure as Code (IaC).
+Ez a tároló egy moduláris home lab környezet konfigurációit tartalmazza. A szolgáltatások Docker Compose, Kubernetes és Terraform segítségével kezelhetők.
 
-## Service Directory
+## Általános Személyre Szabás
 
-The services are organized into functional categories to facilitate management and discovery.
+A szolgáltatások hordozhatóra lettek tervezve, de az elindításuk előtt néhány lépést meg kell tenned a saját környezetedhez igazítva:
 
-### Core Infrastructure & Security
-- **adguard**: DNS-level ad and tracker blocking.
-- **authentik**: Centralized identity provider and authentication.
-- **traefik**: Edge router and reverse proxy for service exposure.
-- **portainer**: Web-based interface for container management.
-- **watch-tower**: Automated updates for running Docker containers.
-- **uptimekuma**: Uptime monitoring and status alerts.
-- **prometheus**: Monitoring and time-series database for metrics.
-- **docker-monitor**: Real-time monitoring for Docker containers.
-- **tugtainer**: Container event notifications and monitoring.
-- **clamAV**: Antivirus engine for scanning file uploads.
-- **homepage**: Unified dashboard for service access.
+1.  **Domain nevek**: A legtöbb szolgáltatás Traefik-et használ reverse proxy-ként. A `docker-compose.yml` fájlokban a `Host(`...`)` szabályokat írd át a saját domainedre.
+2.  **Elérési utak (Volumes)**: A konfigurációkban szereplő kötetek (pl. `/mnt/hdd/...` vagy `./data`) a te tárhely-elrendezésedhez kell igazítani.
+3.  **Környezeti változók**: Minden mappában található egy `.env.example`. Ezt másold le `.env` néven, és töltsd ki a saját adataiddal (jelszavak, API kulcsok, IP címek).
 
-### Data & Document Management
-- **seafile**: High-performance file synchronization and storage.
-- **paperless**: AI-powered document management and archiving.
-- **bookmark**: Self-hosted bookmarking service.
-- **gyurus-docs**: Internal documentation and knowledge sharing.
+## Szolgáltatások Jegyzéke
 
-### Media & Entertainment
-- **immich**: Self-hosted photo and video management solution.
-- **tdarr**: Distributed media transcoding and library optimization.
-- **torrent**: Stack for managing media downloads and distribution.
-- **cleanuparr**: Automated media library cleanup and optimization.
-- **maintainarr**: Maintenance tools for the *arr suite.
-- **soulsync**: Automated music synchronization service.
-- **mc-server**: Dedicated Minecraft server instance.
-- **crafty**: Web-based Minecraft server manager and dashboard.
-- **hardver**: Automated monitoring for hardware marketplaces.
+### Alapvető Infrastruktúra
+- [**adguard**](./adguard/README.md): DNS-szintű szűrés és reklámblokkolás.
+- [**authentik**](./authentik/README.md): Identitáskezelés és SSO.
+- [**traefik**](./traefik/README.md): Reverse proxy és SSL kezelés.
+- [**portainter**](./portainter/README.md): Docker kezelő felület.
+- [**watch-tower**](./watch-tower/README.md): Automatikus konténer frissítés.
+- [**uptimekuma**](./uptimekuma/README.md): Elérhetőség monitorozás.
+- [**prometheus**](./prometheus/README.md): Metrikák és Grafana dashboardok.
+- [**docker-monitor**](./docker-monitor/README.md): Rendszererőforrás figyelés.
 
-### AI, Productivity & Education
-- **forgejo**: Self-hosted git service and development platform.
-- **liteLLM**: Unified proxy for various Large Language Model APIs.
-- **openWebUI**: Interactive interface for local and remote LLMs.
-- **affine**: Unified workspace for notes, tasks, and knowledge management.
-- **vsc**: Code-server for browser-based development.
+### Adat és Média
+- [**seafile**](./seafile/README.md): Felhő alapú fájltárolás.
+- [**paperless**](./paperless/README.md): Dokumentum archiváló.
+- [**immich**](./immich/README.md): Fotó és videó kezelő.
+- [**torrent**](./torrent/README.md): Média letöltő és lejátszó stack (Arr, Plex, Jellyfin).
+- [**tdarr**](./tdarr/README.md): Videó transzkódoló.
 
-### Network & Utilities
-- **searxng**: Privacy-focused metasearch engine.
-- **mail-drop**: Local mail relay or temporary mail service.
-- **repocket**: Passive income network sharing utility.
-- **napelem**: Monitoring system for solar energy production and consumption.
+### Fejlesztés és Produktivitás
+- [**forgejo**](./forgejo/README.md): Git szerver.
+- [**openwebui**](./openwebui/README.md): AI/LLM webes felület.
+- [**affine**](./affine/README.md): Jegyzetelés és tudásbázis.
+- [**vsc**](./vsc/README.md): Webes VS Code.
 
-## Infrastructure as Code (Terraform)
+## Telepítés lépései
 
-The `terraform/` directory contains modules for provisioning virtual machines and managed services on Proxmox and Cloudflare.
-
-- **adguard**: Provisioning of AdGuard Home instances.
-- **cloudflare**: Management of Cloudflare Tunnels and DNS records.
-- **docker**: Provisioning of dedicated Docker hosts.
-- **ollama**: Infrastructure for hosting local AI models.
-- **talos-kube**: Kubernetes cluster deployment using Talos Linux.
-- **torrent**: Virtual machine setup for dedicated torrenting services.
-
-## Deployment Strategy
-
-Most services are deployed using Docker Compose for simplicity and portability. For more complex workloads, Kubernetes manifests are provided:
-
-- **Docker Compose**: Each service directory contains a `docker-compose.yaml`. Configuration is managed via `.env` files (see `.env.template` for required variables).
-- **Kubernetes**: Deployment and Ingress manifests for `immich` and `homepage` are located in their respective directories and the `minikube/` folder.
-- **Terraform**: Infrastructure can be provisioned by running `terraform init` and `terraform apply` within the specific subdirectories under `terraform/`.
-
-## Security Notes
-
-- All sensitive credentials should be stored in `.env` files or passed as environment variables.
-- The `.gitignore` file is configured to prevent accidental commits of `.env`, `.tfstate`, and other sensitive configuration files.
-- Default passwords (e.g., in `paperless` or `napelem`) should be updated to secure values in production environments.
+1. Válaszd ki a szolgáltatást.
+2. Ellenőrizd a `README.md`-t a mappájában.
+3. Állítsd be a `.env` fájlt.
+4. Indítsd el: `docker compose up -d`.
