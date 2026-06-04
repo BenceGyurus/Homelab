@@ -6,4 +6,6 @@ services:
     container_name: ruview_server
     ports:
       - "3000:3000"
+    environment:
+      - SENSING_ALLOWED_HOSTS=*
     restart: unless-stopped
