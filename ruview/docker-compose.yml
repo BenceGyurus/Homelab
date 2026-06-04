@@ -7,5 +7,5 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - SENSING_ALLOWED_HOSTS=localhost,127.0.0.1,192.168.1.39
+      - SENSING_ALLOWED_HOSTS=localhost,127.0.0.1,192.168.1.39,192.168.1.39:3000
     restart: unless-stopped
