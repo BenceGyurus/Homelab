@@ -8,6 +8,8 @@ services:
   server:
     image: codeberg.org/forgejo/forgejo:13
     container_name: forgejo
+    env_file:
+      - ../stack.env
     environment:
       - USER_UID=1000
       - USER_GID=1000
@@ -40,6 +42,8 @@ services:
   db:
     image: postgres:14
     restart: always
+    env_file:
+      - ../stack.env
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -52,6 +56,8 @@ services:
   # --- ÚJ RUNNER SZERVIZ ---
   runner:
     image: data.forgejo.org/forgejo/runner:12
+    env_file:
+      - ../stack.env
     restart: always
     depends_on:
       - server
