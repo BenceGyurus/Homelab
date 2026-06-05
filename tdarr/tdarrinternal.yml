@@ -38,7 +38,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.50'
+          cpus: 2
   # tdarr-node:
   #   user: "1000:1000"
   #   container_name: tdarr-node
