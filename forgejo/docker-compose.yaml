@@ -36,6 +36,7 @@ services:
       - "222:22"
     depends_on:
       - db
+
   db:
     image: postgres:14
     restart: always
@@ -46,4 +47,21 @@ services:
     networks:
       - forgejo
     volumes:
-      - /mnt/hdd/forgejo/db:/var/lib/postgresql/data#
+      - /mnt/hdd/forgejo/db:/var/lib/postgresql/data
+
+  # --- ÚJ RUNNER SZERVIZ ---
+  runner:
+    image: codeberg.org/forgejo/forgejo-runner:4.0.1
+    restart: always
+    depends_on:
+      - server
+    networks:
+      - forgejo
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /mnt/hdd/forgejo/runner:/data
+    environment:
+      - FORGEJO_INSTANCE_URL=http://server:3000
+      - FORGEJO_RUNNER_REGISTRATION_TOKEN=${FORGEJO_RUNNER_REGISTRATION_TOKEN}
+      - FORGEJO_RUNNER_NAME=my-docker-runner
+      - FORGEJO_RUNNER_LABELS=ubuntu-latest:docker://catthehacker/ubuntu:act-latest,ubuntu-22.04:docker://catthehacker/ubuntu:act-22.04
