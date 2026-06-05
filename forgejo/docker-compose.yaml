@@ -53,33 +53,14 @@ services:
     volumes:
       - /mnt/hdd/forgejo/db:/var/lib/postgresql/data
 
-  docker-in-docker:
-      image: docker:dind
-      container_name: docker_dind
-      privileged: true
-      command: ['dockerd', '-H', 'tcp://0.0.0.0:2375', '--tls=false']
-      restart: unless-stopped
-      networks:
-        - forgejo
 
-  runner:
-      image: data.forgejo.org/forgejo/runner:12
-      container_name: runner
-      restart: unless-stopped
-      depends_on:
-        docker-in-docker:
-          condition: service_started
-        server:
-          condition: service_started
-      networks:
-        - forgejo
-      volumes:
-        - /mnt/hdd/forgejo/runner:/data
-      environment:
-        - DOCKER_HOST=tcp://docker-in-docker:2375
-        # FONTOS: DinD esetén a külső, publikus URL-t használd, különben a belső konténerek nem érik el a Git-et!
-        - FORGEJO_INSTANCE_URL=https://git.gyurus.hu
-        - FORGEJO_RUNNER_REGISTRATION_TOKEN=${yQlkESV5OjFBLgKvTWWHVTQSvDHqovjaGOaMQIw3}
-        - FORGEJO_RUNNER_NAME=dind-runner
-        - FORGEJO_RUNNER_LABELS=ubuntu-latest:docker://catthehacker/ubuntu:act-latest
-      command: 'forgejo-runner daemon --config /data/runner-config.yml'
+  forgejo-runner:
+    image: alex3305/forgejo-runner-dind:latest
+    privileged: true
+    network:
+      internal:
+    volumes:
+      /mnt/hdd/forgejo/runner:/config
+    environment:
+      FORGEJO_INSTANCE_URL: https://git.gyurus.hu
+      FORGEJO_REGISTRATION_TOKEN: ${FORGEJO_RUNNER_REGISTRATION_TOKEN}
