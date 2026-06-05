@@ -69,3 +69,5 @@ services:
       FORGEJO_INSTANCE_URL: https://git.gyurus.hu
       FORGEJO_RUNNER_REGISTRATION_TOKEN: ${FORGEJO_RUNNER_REGISTRATION_TOKEN}
     command: forgejo-runner daemon --config /data/config.yml
+    extra_hosts:
+      - "git.gyurus.hu:host-gateway"
