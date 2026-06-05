@@ -55,13 +55,13 @@ services:
 
 
   forgejo-runner:
-      image: data.forgejo.org/forgejo/runner:12
-      user: root
-      privileged: true
-      volumes:
-        - /mnt/hdd/forgejo/runner:/data
-        - /var/run/docker.sock:/var/run/docker.sock
-      environment:
-        FORGEJO_INSTANCE_URL: https://git.gyurus.hu
-        FORGEJO_RUNNER_REGISTRATION_TOKEN: ${FORGEJO_RUNNER_REGISTRATION_TOKEN}
-      command: daemon
+    image: data.forgejo.org/forgejo/runner:12
+    user: root
+    privileged: true
+    volumes:
+      - /mnt/hdd/forgejo/runner:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      FORGEJO_INSTANCE_URL: https://git.gyurus.hu
+      FORGEJO_RUNNER_REGISTRATION_TOKEN: ${FORGEJO_RUNNER_REGISTRATION_TOKEN}
+    command: forgejo-runner daemon
