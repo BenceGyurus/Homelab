@@ -32,10 +32,9 @@ services:
       - "traefik.http.routers.forgejo.entrypoints=web"
       - "traefik.http.routers.forgejo.rule=Host(`git.gyurus.hu`)"
       - "traefik.http.services.forgejo.loadbalancer.server.port=3000"
-      - "traefik.http.middlewares.forgejo-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
-      - "traefik.http.routers.forgejo.middlewares=forgejo-headers"
       - "traefik.http.middlewares.forgejo-buffering.buffering.maxRequestBodyBytes=0"
-      - "traefik.http.routers.forgejo.middlewares=forgejo-headers,forgejo-buffering"
+      - "traefik.http.middlewares.forgejo-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.routers.forgejo.middlewares=forgejo-buffering,forgejo-headers"
     ports:
       - "222:22"
     depends_on:
