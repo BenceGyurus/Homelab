@@ -55,7 +55,7 @@ services:
 
 
   forgejo-runner:
-    image: codeberg.org/forgejo/runner:5
+    image: codeberg.org/forgejo/runner:latest
     privileged: true
     volumes:
       - /mnt/hdd/forgejo/runner:/config
