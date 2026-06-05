@@ -1,6 +1,7 @@
 services:
   tdarr:
     container_name: tdarr
+    user: 1000:1000
     image: ghcr.io/haveagitgat/tdarr:latest
     restart: unless-stopped
     network_mode: bridge
@@ -8,6 +9,9 @@ services:
       - 8265:8265
       - 8266:8266
     environment:
+      - PUID=1000
+      - PGID=1000
+      - user
       - TZ=Europe/Budapest
       - PUID=${PUID}
       - PGID=${PGID}
@@ -24,6 +28,7 @@ services:
       - maxLogSizeMB=10
       - cronPluginUpdate=
       - transcodecpuWorkers=1
+      - enableDockerAutoUpdater=true
     volumes:
       - /home/bence/torrent/data/tdarr/server:/app/server
       - /home/bence/torrent/data/tdarr/configs:/app/configs
