@@ -71,3 +71,6 @@ services:
     command: forgejo-runner daemon --config /data/config.yml
     extra_hosts:
       - "git.gyurus.hu:host-gateway"
+    restart: always
+    depends_on:
+      - server
