@@ -35,6 +35,10 @@ services:
       - /home/bence/torrent/data/tdarr/logs:/app/logs
       - /home/bence/torrent/data/media:/media
       - /home/bence/torrent/data/tdarr/temp:/temp
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
   # tdarr-node:
   #   user: "1000:1000"
   #   container_name: tdarr-node
