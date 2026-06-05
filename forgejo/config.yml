@@ -1,0 +1,19 @@
+log:
+  level: info
+
+runner:
+  file: .runner
+  capacity: 2         # Egyszerre hány pipeline futhat párhuzamosan
+  envs: {}
+  timeout: 3h
+  shutdown_timeout: 5s
+
+container:
+  network: ""         # DinD esetén hagyd üresen, mert a DinD saját belső hálózatot használ
+  privileged: false   # A futó jobok konténerei ne legyenek privileged módban
+  options: ""
+  workdir: /workspace
+  valid_volumes: []
+
+host:
+  workdir: ""
