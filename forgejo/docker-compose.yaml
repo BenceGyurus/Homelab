@@ -74,8 +74,6 @@ services:
       networks:
         - forgejo
       volumes:
-        # Itt adjuk át a konfigurációs fájlt és a runner adatait
-        - ./runner-config.yml:/data/runner-config.yml
         - /mnt/hdd/forgejo/runner:/data
       environment:
         - DOCKER_HOST=tcp://docker-in-docker:2375
