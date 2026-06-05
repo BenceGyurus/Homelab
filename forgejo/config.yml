@@ -6,6 +6,7 @@ runner:
   capacity: 2         # Egyszerre hány pipeline futhat párhuzamosan
   timeout: 3h
   shutdown_timeout: 5s
+  insecure: true
 
 container:
   network: ""         # DinD esetén hagyd üresen, mert a DinD saját belső hálózatot használ

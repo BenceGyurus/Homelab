@@ -66,7 +66,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       # Használjuk a rendes címet, ahogy a Forgejo elvárja
-      GITEA_INSTANCE_URL: https://git.gyurus.hu
+      GITEA_INSTANCE_URL: http://git.gyurus.hu
       GITEA_RUNNER_REGISTRATION_TOKEN: ${FORGEJO_RUNNER_REGISTRATION_TOKEN}
       # Ez a változó kényszeríti a belső Go klienst, hogy hagyja ki a TLS ellenőrzést
       GITEA_RUNNER_INSECURE: "true"
