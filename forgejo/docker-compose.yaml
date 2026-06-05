@@ -58,6 +58,8 @@ services:
     image: data.forgejo.org/forgejo/runner:12
     user: root
     privileged: true
+    env_file:
+      - ../stack.env
     volumes:
       - /mnt/hdd/forgejo/runner:/data
       - /var/run/docker.sock:/var/run/docker.sock
