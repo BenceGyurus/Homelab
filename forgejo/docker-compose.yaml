@@ -66,4 +66,4 @@ services:
     environment:
       FORGEJO_INSTANCE_URL: https://git.gyurus.hu
       FORGEJO_RUNNER_REGISTRATION_TOKEN: ${FORGEJO_RUNNER_REGISTRATION_TOKEN}
-    command: forgejo-runner daemon
+    command: forgejo-runner daemon --config /data/config.yaml
