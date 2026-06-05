@@ -66,11 +66,14 @@ services:
       - /mnt/hdd/forgejo/runner:/data
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      FORGEJO_INSTANCE_URL: https://git.gyurus.hu
+      FORGEJO_INSTANCE_URL: http://server:3000
       FORGEJO_RUNNER_REGISTRATION_TOKEN: ${FORGEJO_RUNNER_REGISTRATION_TOKEN}
     command: forgejo-runner daemon --config /data/config.yml
     extra_hosts:
       - "git.gyurus.hu:host-gateway"
+    networks:
+      - proxy      # <--- Tedd rá a proxy hálózatra
+      - forgejo
     restart: always
     depends_on:
       - server
