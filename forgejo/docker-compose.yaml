@@ -63,7 +63,7 @@ services:
         - forgejo
 
   runner:
-      image: codeberg.org/forgejo/runner:3.5.1
+      image: data.forgejo.org/forgejo/runner:12
       container_name: runner
       restart: unless-stopped
       depends_on:
