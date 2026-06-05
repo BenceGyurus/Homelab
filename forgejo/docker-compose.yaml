@@ -34,6 +34,8 @@ services:
       - "traefik.http.services.forgejo.loadbalancer.server.port=3000"
       - "traefik.http.middlewares.forgejo-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
       - "traefik.http.routers.forgejo.middlewares=forgejo-headers"
+      - "traefik.http.middlewares.forgejo-buffering.buffering.maxRequestBodyBytes=0"
+      - "traefik.http.routers.forgejo.middlewares=forgejo-headers,forgejo-buffering"
     ports:
       - "222:22"
     depends_on:
