@@ -60,7 +60,7 @@ services:
     network:
       internal:
     volumes:
-      /mnt/hdd/forgejo/runner:/config
+      - /mnt/hdd/forgejo/runner:/config
     environment:
       FORGEJO_INSTANCE_URL: https://git.gyurus.hu
       FORGEJO_REGISTRATION_TOKEN: ${FORGEJO_RUNNER_REGISTRATION_TOKEN}
