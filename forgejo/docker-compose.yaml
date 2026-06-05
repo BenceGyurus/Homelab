@@ -54,20 +54,34 @@ services:
       - /mnt/hdd/forgejo/db:/var/lib/postgresql/data
 
   # --- ÚJ RUNNER SZERVIZ ---
-  runner:
-    image: data.forgejo.org/forgejo/runner:12
+  docker-in-docker:
+    image: docker:dind
+    container_name: 'docker_dind'
     env_file:
       - ../stack.env
-    restart: always
+    privileged: 'true'
+    command: ['dockerd', '-H', 'tcp://0.0.0.0:2375', '--tls=false']
+    restart: 'unless-stopped'
+
+  runner:
+    image: 'data.forgejo.org/forgejo/runner:12'
+    links:
+      - docker-in-docker
+    labels:
+    - debian:docker://docker.io/library/node:lts
+    - ubuntu-latest:docker://ghcr.io/catthehacker/ubuntu:act-22.04
     depends_on:
-      - server
-    networks:
-      - forgejo
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /mnt/hdd/forgejo/runner:/data
+      docker-in-docker:
+        condition: service_started
+    container_name: 'runner'
+    env_file:
+      - ../stack.env
+
     environment:
-      - FORGEJO_INSTANCE_URL=http://server:3000
-      - FORGEJO_RUNNER_REGISTRATION_TOKEN=${FORGEJO_RUNNER_REGISTRATION_TOKEN}
-      - FORGEJO_RUNNER_NAME=my-docker-runner
-      - FORGEJO_RUNNER_LABELS=ubuntu-latest:docker://catthehacker/ubuntu:act-latest,ubuntu-22.04:docker://catthehacker/ubuntu:act-22.04
+      FORGEJO_RUNNER_REGISTRATION_TOKEN: ${FORGEJO_RUNNER_REGISTRATION_TOKEN}
+      DOCKER_HOST: tcp://docker-in-docker:2375
+    user: 1001:1001
+    volumes:
+      - /mnt/hdd/forgejo/runner:/data
+    restart: 'unless-stopped'
+    command: 'forgejo-runner daemon --config runner-config.yml'
