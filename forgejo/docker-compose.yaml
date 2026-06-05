@@ -51,7 +51,7 @@ services:
 
   # --- ÚJ RUNNER SZERVIZ ---
   runner:
-    image: codeberg.org/forgejo/forgejo-runner:4.0.1
+    image: data.forgejo.org/forgejo/runner:12
     restart: always
     depends_on:
       - server
