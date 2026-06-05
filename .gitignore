@@ -21,7 +21,7 @@ mail-drop/config.json
 liteLLM/config.yaml
 maildrop/config.json
 *pve.yml
-torrent/*
+torrent/
 seafile/garage.toml
 *.env*
 backup/*
