@@ -6,7 +6,7 @@ networks:
 
 services:
   server:
-    image: gitea/act_runner:latest
+    image: codeberg.org/forgejo/forgejo:13
     container_name: forgejo
     env_file:
       - ../stack.env
@@ -53,8 +53,9 @@ services:
     volumes:
       - /mnt/hdd/forgejo/db:/var/lib/postgresql/data
 
+
   forgejo-runner:
-    image: data.forgejo.org/forgejo/runner:12
+    image: gitea/act_runner:latest
     user: root
     privileged: true
     env_file:
@@ -63,10 +64,6 @@ services:
       - /mnt/hdd/forgejo/runner:/data
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      # MÓDOSÍTVA: A külső cím helyett a belső nevet és portot használjuk (HTTP elég, mivel belső hálózat)
-      FORGEJO_INSTANCE_URL: http://forgejo:3000
+      FORGEJO_INSTANCE_URL: https://git.gyurus.hu
       FORGEJO_RUNNER_REGISTRATION_TOKEN: ${FORGEJO_RUNNER_REGISTRATION_TOKEN}
     command: forgejo-runner daemon --config /data/config.yml
-    # HOZZÁADVA: Összekötjük a runnert a Forgejo belső hálózatával
-    networks:
-      - forgejo
