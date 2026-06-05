@@ -1,7 +1,6 @@
 services:
   tdarr:
     container_name: tdarr
-    user: 1000:1000
     image: ghcr.io/haveagitgat/tdarr:latest
     restart: unless-stopped
     network_mode: bridge
