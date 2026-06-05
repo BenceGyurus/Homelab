@@ -57,8 +57,6 @@ services:
   forgejo-runner:
     image: alex3305/forgejo-runner-dind:latest
     privileged: true
-    network:
-      internal:
     volumes:
       - /mnt/hdd/forgejo/runner:/config
     environment:
