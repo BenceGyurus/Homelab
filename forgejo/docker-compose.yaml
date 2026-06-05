@@ -55,7 +55,8 @@ services:
 
 
   forgejo-runner:
-    image: data.forgejo.org/forgejo/runner:latest
+    image: data.forgejo.org/forgejo/runner:12
+    user: root
     privileged: true
     volumes:
       - /mnt/hdd/forgejo/runner:/config
