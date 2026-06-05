@@ -35,7 +35,7 @@ services:
       - /home/bence/torrent/data/media:/media
       - /home/bence/torrent/data/tdarr/temp:/temp
       - /home/bence/torrent/data/tdarr/plugins:/app/Tdarr_Server/plugins
-      - /home/bence/torrent/data/tdarr/shared:/app/shared
+      - /home/bence/torrent/data/tdarr/plugins:/app/Tdarr_Node/assets/app/plugins
     deploy:
       resources:
         limits:
