@@ -1,0 +1,25 @@
+services:
+  maintain-email-service:
+    image: git.gyurus.hu/gyurusbence/maintain-email-service:latest
+    container_name: maintainer-email
+    restart: always
+    env_file:
+      - "../stack.env"
+    networks:
+      - proxy
+    volumes:
+      - /mnt/hdd/maintainer:/app/prisma
+    environment:
+      - DATABASE_URL=file:/app/prisma/dev.db
+      - NEXTAUTH_URL=https://maintainer.gyurus.hu
+      - NEXTAUTH_SECRET=${MAINTAIN_EMAIL_SECRET}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.maintainer-email.entrypoints=web"
+      - "traefik.http.routers.maintainer-email.rule=Host(`maintainer.gyurus.hu`)"
+      - "traefik.http.services.maintainer-email.loadbalancer.server.port=3000"
+
+networks:
+  proxy:
+    external: true
