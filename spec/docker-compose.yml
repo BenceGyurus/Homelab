@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  specializacio-web:
+    image: git.gyurus.hu/gyurusbence/spec:latest
+    container_name: specializacio_valasztas
+    ports:
+      - "8080:80"
+    restart: always
