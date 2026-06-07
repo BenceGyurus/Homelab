@@ -4,5 +4,5 @@ services:
     image: git.gyurus.hu/gyurusbence/spec:latest
     container_name: specializacio_valasztas
     ports:
-      - "8080:80"
+      - "8012:80"
     restart: always
