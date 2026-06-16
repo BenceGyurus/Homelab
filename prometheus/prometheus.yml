@@ -84,3 +84,8 @@ scrape_configs:
     scheme: https
     static_configs:
       - targets: ['mc.gyurus.hu']
+
+
+  - job_name: 'dcgm-exporter'
+    static_configs:
+      - targets: ['192.168.1.46:9400']

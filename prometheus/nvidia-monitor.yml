@@ -1,0 +1,20 @@
+services:
+  dcgm-exporter:
+    image: nvcr.io/nvidia/k8s/dcgm-exporter:3.3.5-3.4.0-ubuntu22.04
+    container_name: dcgm-exporter
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    environment:
+      - DCGM_EXPORTER_INTERVAL=15000
+    cap_add:
+      - SYS_ADMIN
+    restart: unless-stopped
+    ports:
+      - "9400:9400"
+    networks:
+      - monitor-net
