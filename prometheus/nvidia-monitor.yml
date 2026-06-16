@@ -16,5 +16,3 @@ services:
     restart: unless-stopped
     ports:
       - "9400:9400"
-    networks:
-      - monitor-net
