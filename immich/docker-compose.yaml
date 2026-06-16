@@ -37,6 +37,7 @@ services:
       - IMMICH_MACHINE_LEARNING_URL=http://192.168.1.46:3003
       - UPLOAD_LOCATION=/mnt/hdd/library
       - THUMB_LOCATION=/mnt/hdd/immich-thumbs
+      - IMMICH_VERSION=v3.0.0-rc.0
     volumes:
       # Do not edit the next line. If you want to change the media storage location on your system, edit the value of UPLOAD_LOCATION in the ../stack.env file
       - ${UPLOAD_LOCATION:-/mnt/hdd/library}:/data
