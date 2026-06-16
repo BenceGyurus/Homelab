@@ -1,0 +1,24 @@
+---
+- name: Firewall
+  hosts: public
+  become: true
+  tasks:
+    - name: allow http, https ports
+      community.general.ufw:
+        port: "{{ item }}"
+        rule: allow
+        proto: any
+        log: true
+      loop:
+        - http
+        - https
+
+    - name: allow ssh port
+      community.general.ufw:
+        rule: allow
+        port: ssh
+
+    - name: allow mc port (Minecraft)
+      community.general.ufw:
+        rule: allow
+        port: '25565'
