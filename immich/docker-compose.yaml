@@ -34,7 +34,7 @@ services:
     #   file: hwaccel.transcoding.yml
     #   service: cpu # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
     environment:
-      - IMMICH_MACHINE_LEARNING_URL=http://192.168.1.46:3003
+      - IMMICH_MACHINE_LEARNING_URL=http://192.168.100.46:3003
       - UPLOAD_LOCATION=/mnt/hdd/library
       - THUMB_LOCATION=/mnt/hdd/immich-thumbs
       - IMMICH_VERSION=v3.0.0-rc.0
@@ -110,7 +110,7 @@ services:
       - "5000:5000"
     environment:
       - IMMICH_API_KEY=${API_KEY}
-      - IMMICH_BASE_URL=http://192.168.1.17:2283
+      - IMMICH_BASE_URL=http://192.168.100.17:2283
     volumes:
       - /mnt/hdd/immich-selfie-timelapse/config:/app/config
       - /mnt/hdd/immich-selfie-timelapse/output:/app/output

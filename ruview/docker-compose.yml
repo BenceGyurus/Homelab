@@ -9,6 +9,6 @@ services:
       - "5005:5005/udp"
       - "3001:3001"
     environment:
-      - SENSING_ALLOWED_HOSTS=192.168.1.39,192.168.1.39:3000,192.168.1.46,192.168.1.46:3000
+      - SENSING_ALLOWED_HOSTS=192.168.100.39,192.168.100.39:3000,192.168.100.46,192.168.100.46:3000
       - CSI_SOURCE=esp32
     restart: unless-stopped
