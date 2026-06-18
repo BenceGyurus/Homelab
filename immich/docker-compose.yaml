@@ -34,7 +34,7 @@ services:
     #   file: hwaccel.transcoding.yml
     #   service: cpu # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
     environment:
-      - IMMICH_MACHINE_LEARNING_URL=http://192.168.100.46:3003
+      - IMMICH_MACHINE_LEARNING_URL=http://immich-machine-learning:3003
       - UPLOAD_LOCATION=/mnt/hdd/library
       - THUMB_LOCATION=/mnt/hdd/immich-thumbs
       - IMMICH_VERSION=v3.0.0-rc.0
@@ -54,6 +54,28 @@ services:
         limits:
           cpus: "4"
           memory: 4g
+  
+  immich-machine-learning:
+    container_name: immich_machine_learning
+    # For hardware acceleration, add one of -[armnn, cuda, rocm, openvino, rknn] to the image tag.
+    # Example tag: ${IMMICH_VERSION:-release}-cuda
+    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+    # extends: # uncomment this section for hardware acceleration - see https://docs.immich.app/features/ml-hardware-acceleration
+    #   file: hwaccel.ml.yml
+    #   service: cpu # set to one of [armnn, cuda, rocm, openvino, openvino-wsl, rknn] for accelerated inference - use the `-wsl` version for WSL2 where applicable
+    volumes:
+      - /mnt/hdd/model-cache:/cache
+    env_file:
+      - ../stack.env
+    restart: always
+    healthcheck:
+      disable: false
+    deploy:
+      resources:
+        limits:
+          cpus: "4"
+          memory: 4g
+
   redis:
     networks:
       - internal
