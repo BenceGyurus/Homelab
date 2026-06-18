@@ -13,7 +13,7 @@ services:
       - TZ=Eurpoe/Budapest
       - PORT=5055
     volumes:
-      - /path/to/appdata/config:/app/config
+      - /home/bence/torrent/data/jellyseerr/config:/app/config
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/settings/public || exit 1"]
       interval: 15s
