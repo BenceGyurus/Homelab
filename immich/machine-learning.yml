@@ -26,5 +26,5 @@ services:
               capabilities:
                 - gpu
         limits:
-          cpus: "3"
+          cpus: "2"
           memory: 10g
