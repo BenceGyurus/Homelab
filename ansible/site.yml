@@ -1,3 +1,4 @@
 ---
 - import_playbook: router.yml
-- import_playbook: public.yml
+- import_playbook: firewall.yml
+- import_playbook: permissions.yml
