@@ -4,6 +4,7 @@ services:
     image: ghcr.io/haveagitgat/tdarr:latest
     restart: unless-stopped
     network_mode: bridge
+    user: "1000:1000"
     ports:
       - 8265:8265
       - 8266:8266
@@ -12,8 +13,6 @@ services:
       - PGID=1000
       - user
       - TZ=Europe/Budapest
-      - PUID=${PUID}
-      - PGID=${PGID}
       - UMASK_SET=002
       - serverIP=0.0.0.0
       - serverPort=8266
@@ -29,13 +28,13 @@ services:
       - transcodecpuWorkers=1
       - enableDockerAutoUpdater=true
     volumes:
-      - /home/bence/torrent/data/tdarr/server:/app/server
-      - /home/bence/torrent/data/tdarr/configs:/app/configs
-      - /home/bence/torrent/data/tdarr/logs:/app/logs
-      - /home/bence/torrent/data/media:/media
-      - /home/bence/torrent/data/tdarr/temp:/temp
-      - /home/bence/torrent/data/tdarr/plugins:/app/Tdarr_Server/plugins
-      - /home/bence/torrent/data/tdarr/plugins:/app/Tdarr_Node/assets/app/plugins
+      - /opt/torrent/data/tdarr/server:/app/server
+      - /opt/torrent/data/tdarr/configs:/app/configs
+      - /opt/torrent/data/tdarr/logs:/app/logs
+      - /opt/torrent/data/media:/media
+      - /opt/torrent/data/tdarr/temp:/temp
+      - /opt/torrent/data/tdarr/plugins:/app/Tdarr_Server/plugins
+      - /opt/torrent/data/tdarr/plugins:/app/Tdarr_Node/assets/app/plugins
     deploy:
       resources:
         limits:
@@ -59,7 +58,7 @@ services:
   #     - healthcheckgpuWorkers=0
   #     - healthcheckcpuWorkers=0
   #   volumes:
-  #     - /home/bence/torrent/data/tdarr/configs:/app/configs
-  #     - /home/bence/torrent/data/tdarr/logs:/app/logs
-  #     - /home/bence/torrent/data/media:/media
-  #     - /home/bence/torrent/data/tdarr/temp:/temp
+  #     - /opt/torrent/data/tdarr/configs:/app/configs
+  #     - /opt/torrent/data/tdarr/logs:/app/logs
+  #     - /opt/torrent/data/media:/media
+  #     - /opt/torrent/data/tdarr/temp:/temp
