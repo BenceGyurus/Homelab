@@ -15,6 +15,7 @@
 │
 ├── /torrent
 │   ├── permissions.yml    # set users permissions
+│   ├── users.yml          # creates specific users
 │
 ├── site.yml               # playbook file          
 └── README.md
