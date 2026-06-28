@@ -4,7 +4,6 @@ services:
     image: ghcr.io/haveagitgat/tdarr:latest
     restart: unless-stopped
     network_mode: bridge
-    user: "1000:1000"
     ports:
       - 8265:8265
       - 8266:8266
