@@ -8,8 +8,8 @@ services:
       - 8265:8265
       - 8266:8266
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=1002
+      - PGID=1005
       - user
       - TZ=Europe/Budapest
       - UMASK_SET=002
