@@ -6,6 +6,7 @@ services:
     container_name: seerr
     init: true
     restart: unless-stopped
+    user: "1006:1005"
     ports:
       - "5055:5055"
     environment:
