@@ -1,0 +1,41 @@
+
+---
+- name: NetBird kliens telepítése
+  hosts: vpn
+  become: true
+  tasks:
+
+    - name: Szükséges alapcsomagok telepítése
+      ansible.builtin.apt:
+        name:
+          - curl
+          - gnupg
+          - apt-transport-https
+        state: present
+        update_cache: true
+
+    - name: NetBird GPG kulcs letöltése és hozzáadása
+      ansible.builtin.get_url:
+        url: https://pkgs.netbird.io/debian/public.key
+        dest: /etc/apt/keyrings/netbird.asc
+        mode: '0644'
+
+    - name: NetBird APT repository hozzáadása
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/netbird.asc] https://pkgs.netbird.io/debian stable main"
+        state: present
+        filename: netbird
+
+    - name: NetBird kliens csomag telepítése
+      ansible.builtin.apt:
+        name: netbird
+        state: present
+        update_cache: true
+
+    - name: Ellenőrizzük, hogy a NetBird szolgáltatás fut-e
+      ansible.builtin.systemd:
+        name: netbird
+        state: started
+        enabled: true
+
+

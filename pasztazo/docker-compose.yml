@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  db:
+    image: docker.io/library/postgres:15
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpassword
+      POSTGRES_DB: scraperdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  backend:
+    image: ghcr.io/bencegyurus/advertisement-scraper:main
+    environment:
+      - DATABASE_URL=postgresql://admin:adminpassword@db:5432/scraperdb
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app/backend
+      - /app/backend/node_modules
+
+volumes:
+  db_data:

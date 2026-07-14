@@ -59,55 +59,81 @@ variable "vm_password" {
 
 # VM elkészítése az erőforrások és a konfiguráció megadásával
 resource "proxmox_virtual_environment_vm" "vpn" {
-  node_name = "proxmox"
-  name      = "vpn"
-  started   = true
+  node_name   = "proxmox"
+  name        = "vpn"
+  started     = true
+  description = "VPN for a filtered and managed network"
 
-  agent{
+  agent {
     enabled = true
   }
-
-  description = "VPN for a filtered and managed network"
 
   cpu {
     cores = 1
   }
 
   memory {
-    dedicated = 1024
+    dedicated = 2048
   }
 
-    clone {
-        vm_id         = 110
-        node_name     = "proxmox"
-        full = true
-        target = "TB1"
-    }
+  clone {
+    vm_id     = 110
+    node_name = "proxmox"
+    full      = true
+  }
 
-    disk {
-        datastore_id = "TB1"
-        interface    = "scsi0"
-        size		 = 20 
+  disk {
+    datastore_id = "TB1"
+    interface    = "scsi0"
+    size         = 20 
   }
 
   network_device {
-    bridge = "vmbr0"
-    model  = "virtio"
+    bridge  = "vmbr0"
+    model   = "virtio"
     vlan_id = 99
   }
 
   initialization {
-
-    dns{
-        servers = ["192.168.99.250"]
+    dns {
+      servers = ["192.168.99.250"]
     }
 
     ip_config {
-        ipv4 {
+      ipv4 {
         address = "192.168.99.252/24"
         gateway = "192.168.99.1"
-        }
+      }
     }
-    }
+  }
 }
 
+resource "null_resource" "docker_setup_and_run" {
+  # Csak akkor indul el ha a VM elkészült
+  # HIBA a qemu-guest-agent telepítése után azonnal csatlakozik, de a qemu-guest-agent nincs benne a telepített image-ben így azt manuálisan kell telepíteni és elindítani
+  depends_on = [proxmox_virtual_environment_vm.vpn]
+
+  # SSH kapcsolat beállítása a VM-hez
+  connection {
+    type        = "ssh"
+    host        = "192.168.99.252"
+    user        = "bence"
+    private_key = file("~/.ssh/id_ed25519")
+    timeout     = "2m"
+  }
+
+
+  # fájl feltöltése a VM-re, a file provisioner teszi lehetővé, hogy fájlt töltünk fel az installáció után
+  provisioner "file" {
+    source      = "./install-docker.sh"
+    destination = "/home/bence/install-docker.sh"
+  }
+
+  # Docker konténerek indítása a feltöltött docker-compose fájl alapján
+  provisioner "remote-exec" {
+  inline = [
+    "sudo chmod +x /home/bence/install-docker.sh",
+    "sudo bash /home/bence/install-docker.sh",
+  ]
+  }
+}
