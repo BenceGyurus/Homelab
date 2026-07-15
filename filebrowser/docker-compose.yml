@@ -3,7 +3,7 @@ services:
     image: filebrowser/filebrowser:s6
     container_name: filebrowser
     ports:
-      - "8080:80"
+      - "8085:80"
     volumes:
       - /opt/torrent/data/downloads/complete/books:/books
       - /opt/filebrowser/database:/database
