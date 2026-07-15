@@ -1,0 +1,16 @@
+services:
+  filebrowser:
+    image: filebrowser/filebrowser:s6
+    container_name: filebrowser
+    ports:
+      - "8080:80"
+    volumes:
+      - /opt/torrent/data/downloads/complete/books:/books
+      - /opt/filebrowser/database:/database
+      - /opt/filebrowser/config:/config
+    env_file:
+      - ../stack.env
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+    restart: unless-stopped
