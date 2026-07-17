@@ -34,7 +34,7 @@ services:
     #   file: hwaccel.transcoding.yml
     #   service: cpu # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
     environment:
-      - IMMICH_MACHINE_LEARNING_URL=http://immich-machine-learning:3003
+      - IMMICH_MACHINE_LEARNING_URL=http://localhost:3003
       - UPLOAD_LOCATION=/mnt/hdd/library
       - THUMB_LOCATION=/mnt/hdd/immich-thumbs
       - IMMICH_VERSION=release
@@ -63,6 +63,8 @@ services:
     # extends: # uncomment this section for hardware acceleration - see https://docs.immich.app/features/ml-hardware-acceleration
     #   file: hwaccel.ml.yml
     #   service: cpu # set to one of [armnn, cuda, rocm, openvino, openvino-wsl, rknn] for accelerated inference - use the `-wsl` version for WSL2 where applicable
+    ports:
+      - "3003:3003"
     volumes:
       - /mnt/hdd/model-cache:/cache
     env_file:
