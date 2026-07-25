@@ -1,0 +1,113 @@
+---
+- name: Minecraft PaperMC szerver telepitese Debianra
+  hosts: minecraft-vm
+  become: yes
+  vars:
+    mc_user: "minecraft"
+    mc_dir: "/opt/minecraft"
+    ram_min: "2G"
+    ram_max: "4G"
+    paper_url: "https://fill-data.papermc.io/v1/objects/1d70b1dab9cf4a6de615209a536f3a45a2186240253c428213ce2188ab95e5f7/paper-26.1.2-74.jar"
+    whitelisted_players:
+  tasks:
+    - name: Csomagok frissitese es Java 25 telepitese
+      apt:
+        name:
+          - openjdk-25-jre-headless
+          - screen
+          - curl
+          - wget
+          - ufw
+        state: present
+        update_cache: yes
+    
+    - name: allow ssh port
+      community.general.ufw:
+        rule: allow
+        port: ssh
+
+    - name: allow mc port (Minecraft)
+      community.general.ufw:
+        rule: allow
+        port: '25565'
+    
+    - name: UFW tuzfal bekapcsolasa
+      community.general.ufw:
+        state: enabled
+        policy: deny
+    
+
+    - name: Minecraft szerver felhasznalo letrehozasa
+      user:
+        name: "{{ mc_user }}"
+        shell: /bin/bash
+        home: "{{ mc_dir }}"
+
+    - name: Szerver mappa letrehozasa
+      file:
+        path: "{{ mc_dir }}"
+        state: directory
+        owner: "{{ mc_user }}"
+        group: "{{ mc_user }}"
+        mode: '0755'
+
+    - name: PaperMC jar letoltese
+      get_url:
+        url: "{{ paper_url }}"
+        dest: "{{ mc_dir }}/paper.jar"
+        owner: "{{ mc_user }}"
+        group: "{{ mc_user }}"
+        mode: '0644'
+
+    - name: EULA elfogadasa
+      copy:
+        dest: "{{ mc_dir }}/eula.txt"
+        content: "eula=true\n"
+        owner: "{{ mc_user }}"
+        group: "{{ mc_user }}"
+        mode: '0644'
+    
+    - name: Whitelist bekapcsolasa a server.properties fajlban
+      lineinfile:
+        path: "{{ mc_dir }}/server.properties"
+        regexp: '^white-list='
+        line: 'white-list=true'
+        create: yes
+        owner: "{{ mc_user }}"
+        group: "{{ mc_user }}"
+        mode: '0644'
+
+    - name: Whitelist JSON mentese
+      copy:
+        dest: "{{ mc_dir }}/whitelist.json"
+        content: "{{ whitelisted_players | map('hash', 'name') | to_nice_json }}"
+        owner: "{{ mc_user }}"
+        group: "{{ mc_user }}"
+        mode: '0644'
+
+    - name: Systemd szerviz fajl letrehozasa
+      copy:
+        dest: /etc/systemd/system/minecraft.service
+        content: |
+          [Unit]
+          Description=Minecraft PaperMC Szerver
+          After=network.target
+
+          [Service]
+          User={{ mc_user }}
+          WorkingDirectory={{ mc_dir }}
+          ExecStart=/usr/bin/java -Xms{{ ram_min }} -Xmx{{ ram_max }} -jar paper.jar nogui
+          ExecStop=/bin/kill -15 $MAINPID
+          Restart=on-failure
+          RestartSec=10
+
+          [Install]
+          WantedBy=multi-user.target
+        mode: '0644'
+
+    - name: Minecraft szerviz inditasa es engedelyezese
+      systemd:
+        name: minecraft
+        state: started
+        enabled: yes
+        daemon_reload: yes
