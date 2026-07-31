@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: ghcr.io/bencegyurus/drone-3d-scanner-frontend:latest
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  backend:
+    image: ghcr.io/bencegyurus/drone-3d-scanner-backend:latest
+    ports:
+      - "8000:8000"
+    environment:
+      # PWD is the directory where docker-compose up is run from
+      - HOST_DATA_DIR=${PWD}/backend/data
+    volumes:
+      # Map the docker socket so the backend can spawn ODM containers
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Bind mount the data directory so the host path is predictable
+      - /mnt/hdd/3dscanner/backend/data:/app/data
+
+  # Defined here as requested, used by the backend dynamically
+  odm:
+    image: opendronemap/odm:latest
+    profiles:
+      - worker
+    volumes:
+      - /mnt/hdd/3dscanner/backend/data:/datasets
