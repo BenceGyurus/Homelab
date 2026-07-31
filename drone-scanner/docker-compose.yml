@@ -19,7 +19,7 @@ services:
       # Map the docker socket so the backend can spawn ODM containers
       - /var/run/docker.sock:/var/run/docker.sock
       # Bind mount the data directory so the host path is predictable
-      - /mnt/hdd/3dscanner/backend/data:/app/data
+      - /opt/3dscanner/backend/data:/app/data
 
   # Defined here as requested, used by the backend dynamically
   odm:
@@ -27,4 +27,4 @@ services:
     profiles:
       - worker
     volumes:
-      - /mnt/hdd/3dscanner/backend/data:/datasets
+      - /opt/3dscanner/backend/data:/datasets
