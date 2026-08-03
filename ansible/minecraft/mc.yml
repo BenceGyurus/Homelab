@@ -7,8 +7,9 @@
     mc_dir: "/opt/minecraft"
     ram_min: "2G"
     ram_max: "4G"
-    paper_url: "https://fill-data.papermc.io/v1/objects/1d70b1dab9cf4a6de615209a536f3a45a2186240253c428213ce2188ab95e5f7/paper-26.1.2-74.jar"
-    whitelisted_players:
+    rcon_port: 25575
+    paper_url: "https://fill-data.papermc.io/v1/objects/0e824dffed28a61ae716ed3991f291b9ed594e0446262ea8c178a17c8dbb82ba/paper-26.2-91.jar"
+    rcon_password: "{{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}"
   tasks:
     - name: Csomagok frissitese es Java 25 telepitese
       apt:
@@ -18,6 +19,8 @@
           - curl
           - wget
           - ufw
+          - git
+          - build-essential
         state: present
         update_cache: yes
     
@@ -77,13 +80,6 @@
         group: "{{ mc_user }}"
         mode: '0644'
 
-    - name: Whitelist JSON mentese
-      copy:
-        dest: "{{ mc_dir }}/whitelist.json"
-        content: "{{ whitelisted_players | map('hash', 'name') | to_nice_json }}"
-        owner: "{{ mc_user }}"
-        group: "{{ mc_user }}"
-        mode: '0644'
 
     - name: Systemd szerviz fajl letrehozasa
       copy:
@@ -105,9 +101,76 @@
           WantedBy=multi-user.target
         mode: '0644'
 
+    - name: Clone mcrcon
+      git:
+        repo: https://github.com/Tiiffi/mcrcon.git
+        dest: /tmp/mcrcon
+
+    - name: Build mcrcon
+      command:
+        cmd: make
+        chdir: /tmp/mcrcon
+        creates: /tmp/mcrcon/mcrcon
+
+    - name: Install mcrcon
+      copy:
+        src: /tmp/mcrcon/mcrcon
+        dest: /usr/local/bin/mcrcon
+        mode: '0755'
+        remote_src: true
+
+    - name: Enable RCON
+      lineinfile:
+        path: "{{ mc_dir }}/server.properties"
+        regexp: '^enable-rcon='
+        line: 'enable-rcon=true'
+        create: yes
+
+    - name: Set RCON port
+      lineinfile:
+        path: "{{ mc_dir }}/server.properties"
+        regexp: '^rcon.port='
+        line: "rcon.port={{ rcon_port }}"
+
+    - name: Set RCON password
+      lineinfile:
+        path: "{{ mc_dir }}/server.properties"
+        regexp: '^rcon.password='
+        line: "rcon.password={{ rcon_password }}"
+
+
     - name: Minecraft szerviz inditasa es engedelyezese
       systemd:
         name: minecraft
         state: started
         enabled: yes
         daemon_reload: yes
+
+    - name: Store RCON credentials
+      copy:
+        dest: /etc/minecraft-rcon.conf
+        owner: root
+        group: root
+        mode: '0600'
+        content: |
+          RCON_HOST=127.0.0.1
+          RCON_PORT={{ rcon_port }}
+          RCON_PASSWORD={{ rcon_password }}
+
+    - name: Store RCON credentials
+      copy:
+        dest: /etc/minecraft-rcon.conf
+        owner: root
+        group: root
+        mode: '0600'
+        content: |
+          RCON_HOST=127.0.0.1
+          RCON_PORT={{ rcon_port }}
+          RCON_PASSWORD={{ rcon_password }}
+
+    - name: Restart Minecraft
+      systemd:
+        name: minecraft
+        state: restarted
+
+    
