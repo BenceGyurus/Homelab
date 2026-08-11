@@ -26,8 +26,8 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - /mnt/hdd/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - /mnt/hdd/prometheus:/prometheus
+      - /opt/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - /opt/prometheus:/prometheus
     restart: unless-stopped
 
   # --- Grafana ---
@@ -42,7 +42,7 @@ services:
       - GF_USERS_ALLOW_SIGN_UP=false
       - GF_SERVER_ROOT_URL=https://grafana.gyurus.hu
     volumes:
-      - /mnt/hdd/grafana:/var/lib/grafana
+      - /opt/grafana:/var/lib/grafana
     depends_on:
       - prometheus
     restart: unless-stopped
