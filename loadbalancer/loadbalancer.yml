@@ -1,0 +1,136 @@
+http:
+  routers:
+    dashboard:
+      rule: "Host(`traefik.gyurus.hu`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+      entryPoints:
+        - "web"
+      service: "api@internal"
+
+    grafana:
+      entryPoints:
+      - web
+      service: grafana
+      rule: host(`grafana.gyurus.hu`)
+
+    tv:
+      entryPoints:
+      - web
+      service: jellyfin
+      rule: host(`tv.gyurus.hu`)
+
+    photos:
+      entryPoints:
+      - web
+      service: docker
+      rule: host(`photos.gyurus.hu`)
+
+    docs:
+      entryPoints:
+      - web
+      service: docker
+      rule: host(`docs.gyurus.hu`)
+
+    download:
+      entryPoints:
+      - web
+      service: docker
+      rule: host(`download.gyurus.hu`)
+
+    status:
+      entryPoints:
+      - web
+      service: docker
+      rule: host(`status.gyurus.hu`)
+
+
+    portainer:
+      entryPoints:
+      - web
+      service: docker
+      rule: host(`portainer.gyurus.hu`)
+
+    chat:
+      entryPoints:
+      - web
+      service: docker
+      rule: host(`chat.gyurus.hu`)
+
+    drive:
+      entryPoints:
+      - web
+      service: docker
+      rule: host(`drive.gyurus.hu`)
+
+    home:
+      entryPoints:
+      - web
+      service: home-assistant
+      rule: host(`home.gyurus.hu`)
+
+    seer:
+      entryPoints:
+      - web
+      service: seer
+      rule: host(`sorozat.gyurus.hu`)
+
+    auth:
+      entryPoints:
+      - web
+      service: docker
+      rule: host(`auth.gyurus.hu`)
+
+    maildrop:
+      entryPoints:
+      - web
+      service: docker
+      rule: host(`maildrop.gyurus.hu`)
+
+    music:
+      entryPoints:
+      - web
+      service: navidrome
+      rule: host(`music.gyurus.hu`)
+
+    paperless:
+      entryPoints:
+      - web
+      service: docker
+      rule: host(`paperless.gyurus.hu`)
+
+  services:
+    grafana:
+      loadBalancer:
+        servers:
+        - url: http://192.168.100.18:3000
+        passHostHeader: true
+
+    jellyfin:
+      loadBalancer:
+        servers:
+        - url: http://192.168.100.85:8096
+        passHostHeader: true
+
+    docker:
+      loadBalancer:
+        servers:
+        - url: http://192.168.100.17:80
+        passHostHeader: true
+
+    home-assistant:
+      loadBalancer:
+        servers:
+        - url: http://192.168.100.253:8123
+        passHostHeader: true
+
+    seer:
+      loadBalancer:
+        servers:
+        - url: http://192.168.100.85:5055
+        passHostHeader: true
+      
+
+    navidrome:
+      loadBalancer:
+        servers:
+        - url: http://192.168.100.85:4533
+        passHostHeader: true
