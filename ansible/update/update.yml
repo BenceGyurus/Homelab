@@ -1,0 +1,16 @@
+---
+- name: update
+  hosts: torrent, docker, docker2, proxmox
+  become: true
+  tasks:
+    - name: Update and upgrade apt packages
+      apt:
+        upgrade: true
+        update_cache: true
+        cache_valid_time: 86400 #One day
+        autoclean: true
+        autoremove: true
+
+    - name: Reboot a slow machine that might have lots of updates to apply
+      ansible.builtin.reboot:
+        reboot_timeout: 3600
