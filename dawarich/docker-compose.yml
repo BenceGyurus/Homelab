@@ -2,7 +2,8 @@
 # https://dawarich.app/docs/self-hosting/environment-variables/
 
 networks:
-  dawarich:
+  proxy:
+    external: true
 
 services:
   dawarich_redis:
@@ -64,6 +65,7 @@ services:
       - dawarich_db_data:/dawarich_db_data
     networks:
       - dawarich
+      - proxy
     ports:
       - "${DAWARICH_APP_PORT:-3000}:3000"
     labels:
