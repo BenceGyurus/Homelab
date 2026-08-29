@@ -4,6 +4,7 @@
 networks:
   proxy:
     external: true
+  dawarich:
 
 services:
   dawarich_redis:
