@@ -60,6 +60,14 @@ services:
       - dawarich
     ports:
       - "${DAWARICH_APP_PORT:-3000}:3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.dawarin.entrypoints=web"
+      - "traefik.http.routers.dawarin.rule=Host(`track.gyurus.hu`)"
+      - "traefik.http.services.dawarin.loadbalancer.server.port=3000"
+      - "traefik.http.middlewares.dawarin-headers.headers.customrequestheaders.X-Forwarded-Proto=http"
+      - "traefik.http.routers.dawarin.middlewares=dawarin-headers"
     stdin_open: true
     tty: true
     entrypoint: web-entrypoint.sh
