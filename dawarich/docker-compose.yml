@@ -6,6 +6,8 @@ networks:
 
 services:
   dawarich_redis:
+    env_file:
+      ../stack.env
     image: redis:7.4-alpine
     container_name: dawarich_redis
     command: >
@@ -27,6 +29,8 @@ services:
 
   dawarich_db:
     image: postgis/postgis:17-3.5-alpine
+    env_file:
+      ../stack.env
     # image: imresamu/postgis:17-3.5-alpine # If you're on ARM architecture, use this image instead
     shm_size: 1G
     container_name: dawarich_db
@@ -50,6 +54,8 @@ services:
 
   dawarich_app:
     image: freikin/dawarich:latest
+    env_file:
+      ../stack.env
     container_name: dawarich_app
     volumes:
       - dawarich_public:/var/app/public
@@ -124,6 +130,8 @@ services:
           memory: ${APP_MEMORY_LIMIT:-4G}
 
   dawarich_sidekiq:
+    env_file:
+      ../stack.env
     image: freikin/dawarich:latest
     container_name: dawarich_sidekiq
     volumes:
