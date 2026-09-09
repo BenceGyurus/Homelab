@@ -1,0 +1,91 @@
+---
+- name: Harbor 2.9 uzembe helyezese meglevo Docker kornyezetben
+  hosts: docker2
+  become: true
+  vars:
+    harbor_version: "v2.9.2"
+    harbor_install_dir: "/opt/harbor"
+    harbor_hostname: "{{ ansible_host }}"
+    harbor_http_port: 80
+    harbor_metric_port: 9091
+    harbor_admin_password: "HarborPassword123!"
+    harbor_db_password: "DatabasePassword123!"
+
+  tasks:
+    - name: Harbor konyvtarak letrehozasa
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - "{{ harbor_install_dir }}"
+        - /data
+
+    - name: Harbor installer kicsomagolasa
+      unarchive:
+        src: "https://github.com/goharbor/harbor/releases/download/{{ harbor_version }}/harbor-online-installer-{{ harbor_version }}.tgz"
+        dest: "{{ harbor_install_dir }}"
+        remote_src: true
+        extra_opts: ['--strip-components=1']
+        creates: "{{ harbor_install_dir }}/install.sh"
+
+    - name: Gyari harbor.yml.tmpl masolasa harbor.yml-re
+      copy:
+        src: "{{ harbor_install_dir }}/harbor.yml.tmpl"
+        dest: "{{ harbor_install_dir }}/harbor.yml"
+        remote_src: true
+
+    - name: HTTPS kikapcsolasa teszteleshez
+      replace:
+        path: "{{ harbor_install_dir }}/harbor.yml"
+        regexp: '(?m)^https:\n(\s+.*\n)+'
+        replace: "# https kikapcsolva\n"
+
+    - name: Hostname beallitasa
+      lineinfile:
+        path: "{{ harbor_install_dir }}/harbor.yml"
+        regexp: '^hostname:'
+        line: "hostname: {{ harbor_hostname }}"
+
+    - name: Korabbi metric bejegyzesek torlese a fajlbol
+      replace:
+        path: "{{ harbor_install_dir }}/harbor.yml"
+        regexp: '(?ms)^#?\s*metric:.*?(?=\n\S|\Z)'
+        replace: ""
+
+    - name: Metric blokk beillesztese a 9091-es porttal
+      blockinfile:
+        path: "{{ harbor_install_dir }}/harbor.yml"
+        marker: "# {mark} ANSIBLE METRIC CONFIG"
+        block: |
+          metric:
+            enabled: true
+            port: {{ harbor_metric_port }}
+            path: /metrics
+
+    - name: Harbor elokeszitese (prepare script futtatasa)
+      command:
+        cmd: ./prepare
+        chdir: "{{ harbor_install_dir }}"
+      changed_when: true
+
+    - name: Harbor kontenercsoport elinditasa es frissitese
+      command:
+        cmd: docker compose up -d --remove-orphans
+        chdir: "{{ harbor_install_dir }}"
+      register: compose_up
+      changed_when: true
+
+    - name: Prometheus metrics vegpont tesztelese
+      uri:
+        url: "http://127.0.0.1:{{ harbor_metric_port }}/metrics"
+        status_code: 200
+        return_content: true
+      register: metrics_test
+      until: metrics_test.status == 200
+      retries: 20
+      delay: 5
+
+    - name: Sikeres inditas megerositese
+      debug:
+        msg: "A Harbor sikeresen elindult, a metrikak elerhetok a {{ harbor_metric_port }}-es porton."
