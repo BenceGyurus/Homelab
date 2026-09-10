@@ -75,6 +75,9 @@ services:
       - "traefik.http.routers.dawarin.entrypoints=web"
       - "traefik.http.routers.dawarin.rule=Host(`track.gyurus.hu`)"
       - "traefik.http.services.dawarin.loadbalancer.server.port=3000"
+      - "traefik.http.services.dawarin.loadbalancer.server.scheme=http"
+      - "traefik.http.middlewares.dawarin-proto.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.routers.dawarin.middlewares=dawarin-proto"
     stdin_open: true
     tty: true
     entrypoint: web-entrypoint.sh
