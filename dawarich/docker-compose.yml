@@ -114,7 +114,6 @@ services:
         max-size: ${LOG_MAX_SIZE:-100m}
         max-file: ${LOG_MAX_FILE:-5}
     healthcheck:
-      healthcheck:
       test: [ "CMD-SHELL", "curl -f -H 'Host: localhost' http://127.0.0.1:3000/api/v1/health || exit 1" ]
       interval: 10s
       retries: 30
