@@ -72,11 +72,11 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
-      - "traefik.http.routers.dawarin.entrypoints=web"
+      - "traefik.http.routers.dawarin.entrypoints=websecure"
+      - "traefik.http.routers.dawarin.tls=true"
       - "traefik.http.routers.dawarin.rule=Host(`track.gyurus.hu`)"
       - "traefik.http.services.dawarin.loadbalancer.server.port=3000"
-      - "traefik.http.middlewares.dawarin-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
-      - "traefik.http.routers.dawarin.middlewares=dawarin-headers"
+      - "traefik.http.services.dawarin.loadbalancer.server.scheme=http"
     stdin_open: true
     tty: true
     entrypoint: web-entrypoint.sh
