@@ -1,25 +1,4 @@
 services:
-  # # --- InfluxDB ---
-  # influxdb2:
-  #   image: influxdb:2
-  #   container_name: influxdb2
-  #   ports:
-  #     - "8086:8086"
-  #   environment:
-  #     DOCKER_INFLUXDB_INIT_USERNAME_FILE: /run/secrets/influxdb2-admin-username
-  #     DOCKER_INFLUXDB_INIT_PASSWORD_FILE: /run/secrets/influxdb2-admin-password
-  #     DOCKER_INFLUXDB_INIT_ADMIN_TOKEN_FILE: /run/secrets/influxdb2-admin-token
-  #     DOCKER_INFLUXDB_INIT_ORG: docs
-  #     DOCKER_INFLUXDB_INIT_BUCKET: home
-  #   secrets:
-  #     - influxdb2-admin-username
-  #     - influxdb2-admin-password
-  #     - influxdb2-admin-token
-  #   volumes:
-  #     - /mnt/hdd/influxdb2-data:/var/lib/influxdb2
-  #     - /mnt/hdd/influxdb2-config:/etc/influxdb2
-  #   restart: unless-stopped
-  # # --- Prometheus ---
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -46,6 +25,28 @@ services:
     depends_on:
       - prometheus
     restart: unless-stopped
+
+  # # --- InfluxDB ---
+  # influxdb2:
+  #   image: influxdb:2
+  #   container_name: influxdb2
+  #   ports:
+  #     - "8086:8086"
+  #   environment:
+  #     DOCKER_INFLUXDB_INIT_USERNAME_FILE: /run/secrets/influxdb2-admin-username
+  #     DOCKER_INFLUXDB_INIT_PASSWORD_FILE: /run/secrets/influxdb2-admin-password
+  #     DOCKER_INFLUXDB_INIT_ADMIN_TOKEN_FILE: /run/secrets/influxdb2-admin-token
+  #     DOCKER_INFLUXDB_INIT_ORG: docs
+  #     DOCKER_INFLUXDB_INIT_BUCKET: home
+  #   secrets:
+  #     - influxdb2-admin-username
+  #     - influxdb2-admin-password
+  #     - influxdb2-admin-token
+  #   volumes:
+  #     - /mnt/hdd/influxdb2-data:/var/lib/influxdb2
+  #     - /mnt/hdd/influxdb2-config:/etc/influxdb2
+  #   restart: unless-stopped
+  # # --- Prometheus ---
 
 
   # adguard-exporter:

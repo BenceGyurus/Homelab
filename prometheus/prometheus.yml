@@ -50,6 +50,12 @@ scrape_configs:
     metrics_path: /metrics
     static_configs:
       - targets: ['192.168.100.248:9100']
+  
+  - job_name: 'treafik-kubernetes'
+    scrape_interval: 5s
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['192.168.100.248:9100']
 
   - job_name: 'immich'
     scrape_interval: 5s
@@ -95,3 +101,29 @@ scrape_configs:
   - job_name: 'dcgm-exporter'
     static_configs:
       - targets: ['192.168.100.46:9400']
+
+  - job_name: "cloudflared"
+    static_configs:
+      - targets: ["192.168.100.254:60123"]
+
+  - job_name: "harbor"
+    static_configs:
+      - targets: ["192.168.100.18:9091"]
+
+  - job_name: 'harbor-core'
+    params:
+      comp: ['core']
+    static_configs:
+      - targets: ['192.168.100.18:9091']
+
+  - job_name: 'harbor-registry'
+    params:
+      comp: ['registry']
+    static_configs:
+      - targets: ['192.168.100.18:9091']
+
+  - job_name: 'harbor-jobservice'
+    params:
+      comp: ['jobservice']
+    static_configs:
+      - targets: ['192.168.100.18:9091']
