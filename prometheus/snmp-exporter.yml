@@ -7,6 +7,6 @@ services:
       - "9116:9116"
       - "161:161/udp"
     volumes:
-      - ./config:/etc/snmp-exporter
+      - /opt/snmp-expoter/config:/etc/snmp-exporter
     command: --config.file=/etc/snmp-exporter/snmp.yml
     restart: unless-stopped
