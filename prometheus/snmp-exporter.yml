@@ -1,0 +1,12 @@
+---
+services:
+  snmp-exporter:
+    container_name: snmp-exporter
+    image: prom/snmp-exporter:v0.31.0
+    ports:
+      - "9116:9116"
+      - "161:161/udp"
+    volumes:
+      - ./config:/etc/snmp-exporter
+    command: --config.file=/etc/snmp-exporter/snmp.yml
+    restart: unless-stopped

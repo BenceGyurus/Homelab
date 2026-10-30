@@ -27,3 +27,4 @@ seafile/garage.toml
 backup/*
 moodle/*
 .venv
+*snmp.yml
